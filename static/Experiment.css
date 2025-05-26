@@ -6,12 +6,12 @@ html {
 .navbar{
     height: 12vh;
 }
-
 .custom-nav-link {
     color: black !important;
     font-family: Roboto;
+    font-weight: 500;
+    font-size: 18px;
 }
-
 .Logo {
     height: 80px;
     width: 80px;
@@ -73,7 +73,7 @@ html {
 }
 
 .banner-button {
-    width: 130px;
+    width: 170px;
     height: 45px;
    background-color:#1dc198;
     border-radius: 8px;
@@ -83,7 +83,7 @@ html {
 }
 
 .banner-outline-button {
-    width: 130px;
+    width: 170px;
     height: 45px;
     background-color: transparent;
     border-radius: 8px;
@@ -328,7 +328,6 @@ button:active {
 }
 
 .follow-us-icon-container {
-    background-color: #faf7e8;
     width: 80px;
     height: 80px;
     border-radius: 40px;
@@ -336,19 +335,60 @@ button:active {
     padding: 22px 16px 14px 22px;
     transition: transform 0.3s ease;
 }
+.Twiteer{
+    color:rgb(47, 165, 255);
+}
+.facebook{
+        color: rgb(2, 106, 209);;
+
+}
+.instagram{
+    background: radial-gradient(circle at 30% 107%, 
+    #fdf497 0%, 
+    #fdf497 5%, 
+    #fd5949 45%, 
+    #d6249f 60%, 
+    #285AEB 90%);
+}
 .follow-us-icon-container:hover{
     transform: translateY(-5px);
 }
 
 .icon {
-    color: #229aaf;
-    font-size: 35px;
+    
+    font-size: 40px;
+}
+.follow-us-icon-container.instagram {
+  /* Remove any existing background/color */
+  background: transparent;
+  position: relative;
+}
+
+.follow-us-icon-container.instagram .icon {
+  /* Apply gradient to the icon */
+  background: radial-gradient(
+    circle at 30% 107%, 
+    #fdf497 0%, 
+    #fdf497 5%, 
+    #fd5949 45%, 
+    #d6249f 60%, 
+    #285AEB 90%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .footer-section {
-    background-color: #0d2436;
+    background-color: rgb(123, 25, 3);
 }
-
+.text-uppercase{
+ color: rgb(216, 152, 4);
+}
+.hite{
+    font-size: 17px;
+    padding-bottom: 5px;
+}
 .footer-section-mail-id {
     color: #959ead;
     font-family: "Roboto";
