@@ -13,7 +13,7 @@ html {
     font-size: 18px;
 }
 .Logo {
-    height: 80px;
+    height: 75px;
     width: 80px;
     border: 0;
     border-radius: 5px;
@@ -36,7 +36,11 @@ html {
     left: -150px;  /* start from left */
     height: 100%;
     width: 100%;
-    background-image: url("/Static/images/home/banner.jpg");
+
+    background-image: 
+        linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ),
+        url("/Static/images/home/banner.jpg");
+        
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -56,30 +60,30 @@ html {
 }
 
 
-
-
 .banner-heading {
     color: white;
     font-family: Roboto;
     font-size: 45px;
     font-weight: 600;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .banner-caption {
     font-family: Roboto;
     font-size: 24px;
     font-weight: 300;
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .banner-button {
     width: 170px;
     height: 45px;
-   background-color:#1dc198;
+   background-color:#1DC198;
     border-radius: 8px;
     margin-right: 10px;
     border: 0;
-    color: white;
+    color:#FFF;
+     transition: all 0.3s ease;
 }
 
 .banner-outline-button {
@@ -91,17 +95,29 @@ html {
     color: #1dc198;
     border: 1px solid #1dc198;
     font-weight:600;
+      transition: all 0.3s ease;
+}
+.banner-button:hover {
+    background-color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+
 button:hover {
-    background-color: aqua;
+    background-color: white;
     color: black;
     border: none;
     font-weight: bold;
 }
-
+.banner-outline-button:hover {
+     background-color: white;
+    color: black;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 button:active {
-     background-color: aqua;
+     background-color: white;
     color: black;
     border: none;
     font-weight: bold;
@@ -122,6 +138,10 @@ button:active {
     text-align: center;
     border: 1px solid #e5eaf4;
     border-radius: 16px;
+    transition: 0.5s ease;
+}
+.Why-section-card:hover{
+    transform: translateY(-8px);
 }
 
 .Why-section-description {
@@ -455,3 +475,22 @@ button:active {
         height: 200px;
     }
 }
+
+/*Add To Cart Sections:*/
+
+.add-to-cart-icon {
+    background-color: #eb6618;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+}
+
+.add-to-cart-icon:hover {
+    background-color: #d9530e;
+}
+.icon-conatiner{
+    display: inline-block;
+} 
