@@ -1,20 +1,36 @@
 from flask import Flask, render_template
 
-app = Flask(__name__)
+app = Flask(_name_)
 
+# Home route
 @app.route('/')
 def home():
-    return render_template('home.html')
+    return render_template('home.html')  # templates/home.html
 
-@app.route('/sectionHome')
-def section_home():
-    return render_template('home.html')
+# Menu main page
+@app.route('/menu')
+def menu():
+    return render_template('menu.html')  # templates/menu.html
 
-@app.route('/sectionVeg')
-def section_veg():
-    return render_template('menu-sections/veg.html')
+# Veg menu section
+@app.route('/menu/veg')
+def veg():
+    return render_template('menu-sections/veg.html')  # templates/menu-sections/veg.html
 
-# Add similar routes for all other sections
+# Gym food section
+@app.route('/menu/gym')
+def gym():
+    return render_template('menu-sections/gym.html')  # templates/menu-sections/gym.html
 
-if __name__ == '__main__':
+# Street chaat section
+@app.route('/menu/street-chaat')
+def street_chaat():
+    return render_template('menu-sections/street-chaat.html')  # templates/menu-sections/street-chaat.html
+
+# Ice Cream section (Optional: Add if you want this route too)
+@app.route('/menu/ice-cream')
+def ice_cream():
+    return render_template('menu-sections/ice-cream.html')  # templates/menu-sections/ice-cream.html
+
+if _name_ == '_main_':
     app.run(debug=True)
