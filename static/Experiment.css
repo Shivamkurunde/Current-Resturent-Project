@@ -522,3 +522,335 @@ button:active {
 .menu-item-link:hover .custom-svg path {
   fill: white;
 }
+
+/*Login Page:*/
+.custom-login-button {
+    color: white;
+    background-image: radial-gradient(#068cb5, #006ea5);
+    width: 130px;
+    height: 45px;
+    border: 0;
+    border-radius: 8px;
+    margin-right: 10px;
+}
+
+
+
+/* Cart container styling */
+.cart-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #e5eaf4;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 8px;
+    display: none;
+}
+
+/* Cart container styling */
+.cart-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #e5eaf4;
+    padding: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 8px;
+    display: none;
+}
+
+/* Cart header */
+.cart-header {
+    padding-bottom: 8px;
+}
+
+.cart-header h5 {
+    font-family: Roboto;
+    font-size: 20px;
+    margin: 0;
+    color: #183b56;
+}
+
+/* Cart items wrapper */
+.cart-items-wrapper {
+    margin-bottom: 12px;
+}
+
+/* Individual cart item */
+.cart-item {
+    border: 1px solid #e5eaf4;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+/* Item details (name and price) */
+.cart-item-details {
+    font-family: Roboto;
+    color: #183b56;
+}
+
+.cart-item-details strong {
+    font-size: 16px;
+}
+
+.cart-item-details small {
+    font-size: 14px;
+    color: #5a7184;
+}
+
+/* Item controls (quantity buttons and remove) */
+.cart-item-controls {
+    gap: 8px;
+}
+
+.cart-item-controls .btn-sm {
+    font-size: 12px;
+    padding: 2px 6px;
+    line-height: 1;
+}
+
+/* Total text */
+.cart-total-text {
+    font-family: Roboto;
+    font-size: 16px;
+    color: #183b56;
+    margin: 0 0 12px 0;
+}
+
+/* Buy Now button */
+.cart-buy-now {
+    font-size: 16px;
+    padding: 8px;
+    font-family: Roboto;
+}
+
+/* Mobile screens (up to 576px) */
+@media screen and (max-width: 576px) {
+    .cart-container {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+        top: 10px;
+        padding: 12px;
+        max-height: 70vh;
+    }
+
+    .cart-header h5 {
+        font-size: 18px;
+    }
+
+    .cart-item {
+        padding: 6px;
+    }
+
+    .cart-item-details strong {
+        font-size: 14px;
+    }
+
+    .cart-item-details small {
+        font-size: 12px;
+    }
+
+    .cart-item-controls .btn-sm {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+
+    .cart-total-text {
+        font-size: 14px;
+    }
+
+    .cart-buy-now {
+        font-size: 14px;
+        padding: 6px;
+    }
+}
+
+/* Tablets (577px to 768px) */
+@media screen and (min-width: 577px) and (max-width: 768px) {
+    .cart-container {
+        width: 70%;
+        right: 15px;
+    }
+
+    .cart-header h5 {
+        font-size: 19px;
+    }
+
+    .cart-item-details strong {
+        font-size: 15px;
+    }
+
+    .cart-item-details small {
+        font-size: 13px;
+    }
+}
+
+
+
+
+/* Style for the cart section */
+.cart-section {
+    padding-top: 80px; /* Space for the navbar */
+    padding-bottom: 20px;
+}
+
+.cart-section-heading {
+    font-family: Arial;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Style for each cart item */
+.cart-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+/* Style for item name and price */
+.cart-item strong {
+    font-size: 16px;
+    color: #333;
+}
+
+.cart-item small {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Style for quantity buttons and remove button */
+.cart-item .btn-sm {
+    padding: 2px 6px;
+    font-size: 12px;
+}
+
+.cart-item span {
+    margin: 0 10px;
+}
+
+/* Style for total price */
+.cart-total-text {
+    font-family: Arial;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* Style for Buy Now button */
+.cart-button-container .btn-success {
+    padding: 10px;
+    font-size: 16px;
+    width: 50%; /* Adjusted for better appearance */
+}
+
+/* Style for Back to Menu link */
+.menu-item-link {
+    display: inline-block;
+    margin-top: 15px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.menu-item-link:hover {
+    text-decoration: underline;
+}
+
+/* Styles for login.html */
+.healthy-food-section {
+    padding-top: 80px;
+    padding-bottom: 50px;
+}
+
+.healthy-food-section-heading {
+    font-family: Arial;
+    font-size: 30px;
+    color: #333;
+}
+
+.healthy-food-section-description {
+    font-family: Arial;
+    font-size: 16px;
+    color: #666;
+}
+
+.custom-login-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.login-page-description {
+    font-family: Arial;
+    font-size: 14px;
+    color: #666;
+}
+
+/* For small screens (up to 576px) */
+@media screen and (max-width: 576px) {
+    .cart-section-heading {
+        font-size: 24px;
+    }
+
+    .cart-item {
+        padding: 8px;
+    }
+
+    .cart-item strong {
+        font-size: 14px;
+    }
+
+    .cart-item small {
+        font-size: 12px;
+    }
+
+    .cart-item .btn-sm {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+
+    .cart-total-text {
+        font-size: 14px;
+    }
+
+    .cart-button-container .btn-success {
+        font-size: 14px;
+        padding: 8px;
+        width: 70%; /* Adjusted for mobile */
+    }
+
+    .healthy-food-section-heading {
+        font-size: 24px;
+    }
+
+    .healthy-food-section-description {
+        font-size: 14px;
+    }
+
+    .custom-login-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .login-page-description {
+        font-size: 12px;
+    }
+}

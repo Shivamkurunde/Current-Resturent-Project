@@ -1,135 +1,162 @@
 // Experiment.js
-document.addEventListener("DOMContentLoaded", () => {
-    const cart = [];
-    let cartVisible = false;
+document.addEventListener("DOMContentLoaded", function() {
+    var cart = [];
+    var cartIsVisible = false;
 
-    // Create cart UI container
-    const cartContainer = document.createElement("div");
-    cartContainer.className = "border bg-white p-3 shadow";
-    cartContainer.style.position = "fixed";
-    cartContainer.style.top = "20px";
-    cartContainer.style.right = "20px";
-    cartContainer.style.width = "300px";
-    cartContainer.style.zIndex = "1000";
-    cartContainer.style.maxHeight = "80vh";
-    cartContainer.style.overflowY = "auto";
-    cartContainer.style.display = "none";
+    // Create cart box with a custom class
+    var cartBox = document.createElement("div");
+    cartBox.className = "cart-container";
 
-    cartContainer.innerHTML = `
-        <div class="d-flex justify-content-between align-items-center mb-2">
+    cartBox.innerHTML = `
+        <div class="cart-header d-flex justify-content-between align-items-center mb-2">
             <h5>Your Cart</h5>
             <button id="close-cart" class="btn btn-sm btn-danger">X</button>
         </div>
-        <div id="cart-items"></div>
+        <div id="cart-items" class="cart-items-wrapper"></div>
         <hr />
-        <p><strong>Total:</strong> <span id="cart-total">Rs. 0</span></p>
-        <button class="btn btn-success w-100" id="buy-now">Buy Now</button>
+        <p class="cart-total-text"><strong>Total:</strong> <span id="cart-total">Rs. 0</span></p>
+        <button class="btn btn-success w-100 cart-buy-now" id="buy-now">Buy Now</button>
     `;
 
-    document.body.appendChild(cartContainer);
+    document.body.appendChild(cartBox);
 
-    const cartItemsContainer = document.getElementById("cart-items");
-    const cartTotal = document.getElementById("cart-total");
+    var cartItemsArea = document.getElementById("cart-items");
+    var cartTotalText = document.getElementById("cart-total");
 
-    function updateCartUI() {
-        cartItemsContainer.innerHTML = '';
-        let total = 0;
+    function updateCartDisplay() {
+        cartItemsArea.innerHTML = "";
+        var totalPrice = 0;
 
-        cart.forEach(item => {
-            const itemDiv = document.createElement("div");
-            itemDiv.className = "border p-2 mb-2";
-            itemDiv.innerHTML = `
-                <div class="d-flex justify-content-between">
-                    <div>
+        for (var i = 0; i < cart.length; i++) {
+            var item = cart[i];
+            var itemBox = document.createElement("div");
+            itemBox.className = "cart-item border p-2 mb-2";
+            itemBox.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="cart-item-details">
                         <strong>${item.name}</strong><br>
                         <small>${item.priceText}</small>
                     </div>
-                    <div>
+                    <div class="cart-item-controls d-flex align-items-center">
                         <button class="btn btn-sm btn-secondary minus">-</button>
-                        <span class="mx-1">${item.quantity}</span>
+                        <span class="mx-2">${item.quantity}</span>
                         <button class="btn btn-sm btn-secondary plus">+</button>
                         <button class="btn btn-sm btn-danger ml-2 remove">x</button>
                     </div>
                 </div>
             `;
 
-            itemDiv.querySelector(".plus").addEventListener("click", () => {
-                item.quantity++;
-                updateCartUI();
-            });
+            var plusButton = itemBox.querySelector(".plus");
+            plusButton.addEventListener("click", (function(itemIndex) {
+                return function() {
+                    cart[itemIndex].quantity = cart[itemIndex].quantity + 1;
+                    updateCartDisplay();
+                };
+            })(i));
 
-            itemDiv.querySelector(".minus").addEventListener("click", () => {
-                if (item.quantity > 1) {
-                    item.quantity--;
-                    updateCartUI();
-                }
-            });
+            var minusButton = itemBox.querySelector(".minus");
+            minusButton.addEventListener("click", (function(itemIndex) {
+                return function() {
+                    if (cart[itemIndex].quantity > 1) {
+                        cart[itemIndex].quantity = cart[itemIndex].quantity - 1;
+                        updateCartDisplay();
+                    }
+                };
+            })(i));
 
-            itemDiv.querySelector(".remove").addEventListener("click", () => {
-                const index = cart.indexOf(item);
-                if (index !== -1) {
-                    cart.splice(index, 1);
-                    updateCartUI();
-                }
-                if (cart.length === 0) {
-                    cartContainer.style.display = "none";
-                    cartVisible = false;
-                }
-            });
+            var removeButton = itemBox.querySelector(".remove");
+            removeButton.addEventListener("click", (function(itemIndex) {
+                return function() {
+                    var newCart = [];
+                    for (var j = 0; j < cart.length; j++) {
+                        if (j !== itemIndex) {
+                            newCart[newCart.length] = cart[j];
+                        }
+                    }
+                    cart = newCart;
+                    updateCartDisplay();
+                    if (cart.length === 0) {
+                        cartBox.style.display = "none";
+                        cartIsVisible = false;
+                    }
+                };
+            })(i));
 
-            cartItemsContainer.appendChild(itemDiv);
-            total += item.price * item.quantity;
-        });
+            cartItemsArea.appendChild(itemBox);
+            totalPrice = totalPrice + (item.price * item.quantity);
+        }
 
-        cartTotal.textContent = `Rs. ${total.toFixed(2)}`;
+        cartTotalText.textContent = "Rs. " + totalPrice;
     }
 
-    // Handle existing add-to-cart buttons
-    document.querySelectorAll(".add-to-cart-icon").forEach(button => {
-        button.addEventListener("click", (event) => {
+    var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
+    for (var i = 0; i < addToCartButtons.length; i++) {
+        addToCartButtons[i].addEventListener("click", function(event) {
             event.preventDefault();
-            const card = button.closest(".menu-item-card");
+            var card = this;
+            while (!card.classList.contains("menu-item-card")) {
+                card = card.parentElement;
+            }
 
             if (card) {
-                const name = card.querySelector(".menu-card-title").textContent;
-                const priceText = card.querySelector(".Dish-Price").textContent;
-                const price = parseFloat(priceText.replace("Rs.", "").trim());
+                var itemName = card.querySelector(".menu-card-title").textContent;
+                var itemPriceText = card.querySelector(".Dish-Price").textContent;
+                var itemPrice = 0;
+                var priceString = "";
+                for (var j = 3; j < itemPriceText.length; j++) {
+                    var char = itemPriceText[j];
+                    if ((char >= "0" && char <= "9") || char === ".") {
+                        priceString = priceString + char;
+                    }
+                }
+                if (priceString !== "") {
+                    itemPrice = parseFloat(priceString);
+                } else {
+                    itemPrice = 0;
+                }
 
-                const existingItem = cart.find(item => item.name === name);
-                if (existingItem) {
+                var itemAlreadyInCart = false;
+                for (var j = 0; j < cart.length; j++) {
+                    if (cart[j].name === itemName) {
+                        itemAlreadyInCart = true;
+                        break;
+                    }
+                }
+                if (itemAlreadyInCart) {
                     alert("Item already in cart!");
                     return;
                 }
 
-                cart.push({
-                    name,
-                    priceText,
-                    price,
+                var newItem = {
+                    name: itemName,
+                    priceText: itemPriceText,
+                    price: itemPrice,
                     quantity: 1
-                });
+                };
+                cart[cart.length] = newItem;
 
-                cartContainer.style.display = "block";
-                cartVisible = true;
-                updateCartUI();
+                cartBox.style.display = "block";
+                cartIsVisible = true;
+                updateCartDisplay();
             }
         });
+    }
+
+    document.getElementById("close-cart").addEventListener("click", function() {
+        cartBox.style.display = "none";
+        cartIsVisible = false;
     });
 
-    document.getElementById("close-cart").addEventListener("click", () => {
-        cartContainer.style.display = "none";
-        cartVisible = false;
-    });
-
-    document.getElementById("buy-now").addEventListener("click", () => {
+    document.getElementById("buy-now").addEventListener("click", function() {
         if (cart.length === 0) {
             alert("Cart is empty.");
             return;
         }
 
         alert("Thank you for your purchase!");
-        cart.length = 0;
-        updateCartUI();
-        cartContainer.style.display = "none";
-        cartVisible = false;
+        cart = [];
+        updateCartDisplay();
+        cartBox.style.display = "none";
+        cartIsVisible = false;
     });
 });

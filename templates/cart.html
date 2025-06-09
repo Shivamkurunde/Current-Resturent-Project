@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Add Bootstrap and Font Awesome for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/1e8988dde9.js"></script>
+    <link rel="stylesheet" href="/static/Experiment.css">
+</head>
+<body>
+    <!-- Navbar to navigate between pages -->
+    <!-- Cart Section -->
+    <div class="cart-section container">
+        <h1 class="cart-section-heading">Your Cart</h1>
+        <div id="cart-items"></div>
+        <hr>
+        <p class="cart-total-text"><strong>Total:</strong> <span id="cart-total">Rs. 0</span></p>
+        <div class="cart-button-container d-flex justify-content-center">
+            <button class="btn btn-success back-button" id="buy-now">Buy Now</button>
+        </div>
+        <div class="text-center">
+            <a href="/templates/home.html" class="menu-item-link">Back to Menu</a>
+        </div>
+    </div>
+
+    <!-- Script to manage the cart -->
+    <script>
+        // Get cart from localStorage (stored as a string, convert to list)
+        function getCart() {
+            var cartData = localStorage.getItem("cart");
+            if (cartData == null) {
+                return [];
+            }
+            return JSON.parse(cartData);
+        }
+
+        // Save cart to localStorage (convert list to string)
+        function saveCart(cart) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+
+        // Start when the page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get the cart
+            var cart = getCart();
+
+            // Get areas to show cart items and total
+            var cartItemsArea = document.getElementById("cart-items");
+            var cartTotalText = document.getElementById("cart-total");
+
+            // Function to show cart items on the page
+            function showCart() {
+                // Clear the cart area
+                cartItemsArea.innerHTML = "";
+                var totalPrice = 0;
+
+                // If cart is empty, show a message
+                if (cart.length == 0) {
+                    cartItemsArea.innerHTML = '<p class="text-center">Your cart is empty.</p>';
+                }
+
+                // Loop through each item in the cart
+                for (var i = 0; i < cart.length; i++) {
+                    var item = cart[i];
+                    // Create a box for the item
+                    var itemBox = document.createElement("div");
+                    itemBox.className = "cart-item";
+                    itemBox.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${item.name}</strong><br>
+                                <small>${item.priceText}</small>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-secondary minus">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="btn btn-sm btn-secondary plus">+</button>
+                                <button class="btn btn-sm btn-danger remove">x</button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add event for "+" button to increase quantity
+                    var plusButton = itemBox.querySelector(".plus");
+                    plusButton.addEventListener("click", (function(index) {
+                        return function() {
+                            cart[index].quantity = cart[index].quantity + 1;
+                            saveCart(cart);
+                            showCart();
+                        };
+                    })(i));
+
+                    // Add event for "-" button to decrease quantity
+                    var minusButton = itemBox.querySelector(".minus");
+                    minusButton.addEventListener("click", (function(index) {
+                        return function() {
+                            if (cart[index].quantity > 1) {
+                                cart[index].quantity = cart[index].quantity - 1;
+                                saveCart(cart);
+                                showCart();
+                            }
+                        };
+                    })(i));
+
+                    // Add event for "x" button to remove item
+                    var removeButton = itemBox.querySelector(".remove");
+                    removeButton.addEventListener("click", (function(index) {
+                        return function() {
+                            var newCart = [];
+                            for (var j = 0; j < cart.length; j++) {
+                                if (j != index) {
+                                    newCart[newCart.length] = cart[j];
+                                }
+                            }
+                            cart = newCart;
+                            saveCart(cart);
+                            showCart();
+                        };
+                    })(i));
+
+                    // Add item box to the page
+                    cartItemsArea.appendChild(itemBox);
+                    // Add price to total
+                    totalPrice = totalPrice + (item.price * item.quantity);
+                }
+
+                // Show the total price
+                cartTotalText.textContent = "Rs. " + totalPrice;
+            }
+
+            // Add event for "Buy Now" button
+            document.getElementById("buy-now").addEventListener("click", function() {
+                if (cart.length == 0) {
+                    alert("Cart is empty.");
+                    return;
+                }
+                alert("Thank you for your purchase!");
+                cart = [];
+                saveCart(cart);
+                showCart();
+            });
+
+            // Show the cart when the page loads
+            showCart();
+        });
+    </script>
+</body>
+</html>
