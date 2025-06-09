@@ -10,8 +10,7 @@
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script> <!-- Awespme Icon Kit -->
 
     <link rel="stylesheet" href="/static/Experiment.css">
-
-    <script src="Experiment.js" defer></script>
+ <script src="/static/Experiment.js" defer></script>
 
 
 </head>
@@ -22,16 +21,16 @@
      
           
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container">
-                  <a class="navbar-brand" href="#sectionHome" onclick="display('sectionHome')">
-                     <img src="/static/images/home/logo.jpg" class="Logo mr-auto" />
+            <div class="container-fluid"> <!--- container-fluid uses full width while container not-->
+                  <a class="ml-5 pl-5 navbar-brand" href="#sectionHome" onclick="display('sectionHome')">
+                     <img src="/static/images/home/logo.jpg" class="Logo mr-auto ml-5" />
                   </a>
                   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                       <span class="navbar-toggler-icon"></span>
                   </button>
 
-                  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                      <div class="navbar-nav ml-auto">
+                  <div class="collapse navbar-collapse " id="navbarNavAltMarkup">
+                      <div class="navbar-nav ml-auto mr-5 pr-5 justify-content-end">
                           <a class="nav-link active custom-nav-link" href="#Why_choose_US">Why Choose Us? <span class="sr-only">(current)</span></a>
                           <a class="nav-link custom-nav-link" href="#Explore-Menu">Explore Menu</a>
                           <a class="nav-link custom-nav-link" href="#Delivery-Payments">Delivery & Payments</a>
@@ -116,9 +115,9 @@
                             <img src="/static/images/menu/veg/veg-food.jpg" class="menu-item-image w-100" alt="Gym Food" />
                              <h1 class="menu-card-title">Main Course</h1>
                             <a  href="/templates/menu-sections/veg.html">
-                                <button class="menu-item-link">
+                                <button class="menu-item-link ">
                                 View All
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" class=" Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="16px" height="16px" viewBox="0 0 16 16" class=" custom-svg Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                                 </svg>
                                 </button>
@@ -133,7 +132,7 @@
                               <a  href="/templates/menu-sections/gym-food.html">
                                 <button class="menu-item-link">
                                 View All
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" class=" Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="16px" height="16px" viewBox="0 0 16 16" class="  custom-svg Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                                 </svg>
                                 </button>
@@ -147,7 +146,7 @@
                            <a  href="/templates/menu-sections/street-chaat.html">
                                 <button class="menu-item-link">
                                 View All
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" class=" Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="16px" height="16px" viewBox="0 0 16 16" class="  custom-svg  Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                                 </svg>
                                 </button>
@@ -161,7 +160,7 @@
                           <a  href="/templates/menu-sections/Dessert-Icream.html">
                                 <button class="menu-item-link">
                                 View All
-                                <svg width="16px" height="16px" viewBox="0 0 16 16" class=" Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="16px" height="16px" viewBox="0 0 16 16" class="  custom-svg  Class-Svg bi bi-arrow-right-short" fill="#d0b200" xmlns="http://www.w3.org/2000/svg">
                                     <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z" />
                                 </svg>
                                 </button>
@@ -342,9 +341,9 @@
 
 
 
- <script src="Experiment.js" defer></script>
 
- <script type="text/javascript" src="https://d1tgh8fmlzexmh.cloudfront.net/ccbp-static-website/js/ccbp-ui-kit.js"></script>
+
+
 
 <script>  
     window.addEventListener("load", function () {

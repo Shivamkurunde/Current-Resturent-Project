@@ -475,22 +475,50 @@ button:active {
         height: 200px;
     }
 }
+/*back-button and go to home */
+.back-button {
+     background-color: #3b76a3;
+    border-radius: 7px;
+    border-width: 0px;
+    border-style: none;
+}
+.back-button:hover{
+     background-color: #000000;
+}
+
 
 /*Add To Cart Sections:*/
 
 .add-to-cart-icon {
-    background-color: #eb6618;
+    background-color: #38c5c2;
     border: none;
     border-radius: 10px;
     padding: 8px 12px;
     color: white;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease;
+    margin-left: 100px;
+    height: 38px;
+    width: 38px;
 }
-
+.custom_icon{
+        height: 15px;
+    width: 15px;
+    text-align: center;
+}
 .add-to-cart-icon:hover {
-    background-color: #d9530e;
+ /*   background-color: #0ed970;*/
+    background-color: #000000;
+       color: white;
 }
 .icon-conatiner{
     display: inline-block;
+     height: 35px;
+    width: 35px;
+
 } 
+
+/*svg arrow*/
+.menu-item-link:hover .custom-svg path {
+  fill: white;
+}
