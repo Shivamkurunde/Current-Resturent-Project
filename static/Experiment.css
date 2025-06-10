@@ -534,7 +534,9 @@ button:active {
     margin-right: 10px;
 }
 
-
+#login-page-description{
+    color: rgb(203, 193, 132)!important;
+}
 
 /* Cart container styling */
 .cart-container {
@@ -760,14 +762,14 @@ button:active {
 }
 
 /* Style for Back to Menu link */
-.menu-item-link {
+.menu-item-link-for_back {
     display: inline-block;
     margin-top: 15px;
     color: #007bff;
     text-decoration: none;
 }
 
-.menu-item-link:hover {
+.menu-item-link-for_back:hover {
     text-decoration: underline;
 }
 
