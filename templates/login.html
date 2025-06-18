@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login • Annapurana</title>
+
+  <!-- Bootstrap 4.5 & Font Awesome -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <script defer src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
+
+  <!-- Optional Custom CSS and JS -->
+  <link rel="stylesheet" href="/static/Experiment.css">
+  <script defer src="/static/Experiment.js"></script>
+
+  <style>
+    .error-message { color: red; font-size: 14px; margin-top: 10px; }
+    .custom-login-button {
+      background-color: #28a745;
+      color: white;
+      padding: 0.6rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="sectionLogin" class="healthy-food-section pt-5 pb-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+          <div class="shadow p-4 mb-3 bg-white rounded">
+
+            <h1 id="loginHeading" class="healthy-food-section-heading text-center mb-4">Login to Annapurana</h1>
+
+            <!-- Error Box -->
+            <p id="errorBox" class="error-message text-center d-none"></p>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+              <div class="form-group">
+                <label for="username" class="healthy-food-section-description">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+              </div>
+              <div class="form-group">
+                <label for="password" class="healthy-food-section-description">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+              </div>
+              <div class="text-center mt-4">
+                <button type="submit" class="custom-login-button">Login</button>
+              </div>
+            </form>
+
+            <!-- Description -->
+            <p id="login-page-description" class="text-center mt-3 pt-3">
+              Experience premium quality and<br>authentic tastes with Annapurana Restaurent
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript logic -->
+  <script>
+    const VALID_USER = "admin";
+    const VALID_PASS = "Shivam705819@12345";
+
+    const USERNAME_REGEX = /^[a-zA-Z\s]+$/;
+    const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/;
+
+    const form = document.getElementById("loginForm");
+    const errBox = document.getElementById("errorBox");
+    const heading = document.getElementById("loginHeading");
+
+    // Show welcome message if already logged in
+    (function showWelcomeIfLoggedIn() {
+      const savedUser = localStorage.getItem("username");
+      if (!savedUser) return;
+
+      form.classList.add("d-none");
+      errBox.classList.add("d-none");
+      heading.textContent = `Welcome, ${savedUser}!`;
+
+      const wrap = document.createElement("div");
+      wrap.className = "text-center mt-4";
+      wrap.innerHTML = `
+        <button id="logoutBtn" class="btn btn-danger mr-2">Sign Out</button>
+        <a href="home.html" class="btn btn-primary">Go to Home</a>
+      `;
+      form.parentElement.appendChild(wrap);
+
+      document.getElementById("logoutBtn").onclick = () => {
+        localStorage.clear();
+        location.reload();
+      };
+    })();
+
+    // Handle login submission
+    form?.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      let error = "";
+      if (!USERNAME_REGEX.test(username)) {
+        error = "Username must contain only letters and spaces.";
+      } else if (!PASSWORD_REGEX.test(password)) {
+        error = "Password must have at least one capital letter and one special character.";
+      } else if (username !== VALID_USER || password !== VALID_PASS) {
+        error = "Invalid username or password!";
+      }
+
+      if (error) {
+        errBox.textContent = error;
+        errBox.classList.remove("d-none");
+        return;
+      }
+
+      // Success
+      localStorage.setItem("loggedin", "true");
+      localStorage.setItem("username", username);
+      window.location.href = "home.html";
+    });
+  </script>
+</body>
+</html>

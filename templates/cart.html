@@ -27,6 +27,15 @@
 
     <!-- Script to manage the cart -->
     <script>
+
+
+  if (!localStorage.getItem("loggedin")) {
+    alert("You must be logged in to access the cart.");
+    window.location.href = "login.html";
+  }
+
+
+
         // Get cart from localStorage (stored as a string, convert to list)
         function getCart() {
             var cartData = localStorage.getItem("cart");
