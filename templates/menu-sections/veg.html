@@ -99,6 +99,50 @@
 
 
 
+
+    <script>
+    function getCart() {
+        var cart = localStorage.getItem("cart");
+        return cart ? JSON.parse(cart) : [];
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
+
+        addToCartButtons.forEach(function(button) {
+            button.addEventListener("click", function(event) {
+                var card = event.target.closest(".menu-item-card");
+
+                var name = card.querySelector(".menu-card-title").textContent.trim();
+                var priceText = card.querySelector(".Dish-Price").textContent.trim(); // "Rs.120"
+                var price = parseInt(priceText.replace(/[^\d]/g, ""));
+
+                var cart = getCart();
+                var existingItem = cart.find(item => item.name === name);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        name: name,
+                        priceText: priceText,
+                        price: price,
+                        quantity: 1
+                    });
+                }
+
+                saveCart(cart);
+                alert(name + " added to cart!");
+            });
+        });
+    });
+</script>
+
+
  
 </body>
 </html>
