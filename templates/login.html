@@ -13,19 +13,38 @@
   <link rel="stylesheet" href="/static/Experiment.css">
   <script defer src="/static/Experiment.js"></script>
 
-  <style>
-    .error-message { color: red; font-size: 14px; margin-top: 10px; }
-    .custom-login-button {
-      background-color: #28a745;
-      color: white;
-      padding: 0.6rem 2rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-    }
-  </style>
+
+<style>
+  .error-message {
+    font-size: 14px;
+    margin-top: 10px;
+    display: none;
+  }
+
+  .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 10px;
+    border-radius: 4px;
+  }
+
+  .custom-login-button {
+    background-color: #28a745;
+    color: white;
+    padding: 0.6rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+</style>
+
+
 </head>
+
 <body>
+
+
   <div id="sectionLogin" class="healthy-food-section pt-5 pb-5">
     <div class="container">
       <div class="row justify-content-center">
@@ -64,65 +83,119 @@
   </div>
 
   <!-- JavaScript logic -->
-  <script>
-    const VALID_USER = "admin";
+<script>
+  const VALID_USER = "admin";
+  const VALID_PASS = "Shivam@123";
 
-    const USERNAME_REGEX = /^[a-zA-Z\s]+$/;
-    const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,}$/;
+  const USERNAME_REGEX = /^[a-zA-Z\s]+$/;
 
-    const form = document.getElementById("loginForm");
-    const errBox = document.getElementById("errorBox");
-    const heading = document.getElementById("loginHeading");
+  const form = document.getElementById("loginForm");
+  const errBox = document.getElementById("errorBox");
+  const heading = document.getElementById("loginHeading");
 
-    // Show welcome message if already logged in
-    (function showWelcomeIfLoggedIn() {
-      const savedUser = localStorage.getItem("username");
-      if (!savedUser) return;
+  // Show welcome message if already logged in
+  (function showWelcomeIfLoggedIn() {
+    const savedUser = localStorage.getItem("username");
+    if (!savedUser) return;
 
-      form.classList.add("d-none");
-      errBox.classList.add("d-none");
-      heading.textContent = `Welcome, ${savedUser}!`;
+    form.classList.add("d-none");
+    errBox.classList.add("d-none");
+    heading.textContent = `Welcome, ${savedUser}!`;
 
-      const wrap = document.createElement("div");
-      wrap.className = "text-center mt-4";
-      wrap.innerHTML = `
-        <button id="logoutBtn" class="btn btn-danger mr-2">Sign Out</button>
-        <a href="home.html" class="btn btn-primary">Go to Home</a>
-      `;
-      form.parentElement.appendChild(wrap);
+    const wrap = document.createElement("div");
+    wrap.className = "text-center mt-4";
+    wrap.innerHTML = `
+      <button id="logoutBtn" class="btn btn-danger mr-2">Sign Out</button>
+      <a href="home.html" class="btn btn-primary">Go to Home</a>
+    `;
+    form.parentElement.appendChild(wrap);
 
-      document.getElementById("logoutBtn").onclick = () => {
-        localStorage.clear();
-        location.reload();
-      };
-    })();
+    document.getElementById("logoutBtn").onclick = () => {
+      localStorage.clear();
+      location.reload();
+    };
+  })();
 
-    // Handle login submission
-    form?.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
+  // Handle login submission
+  form?.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
 
-      let error = "";
-      if (!USERNAME_REGEX.test(username)) {
-        error = "Username must contain only letters and spaces.";
-      } else if (!PASSWORD_REGEX.test(password)) {
-        error = "Password must have at least one capital letter and one special character.";
-      } else if (username !== VALID_USER || password !== VALID_PASS) {
-        error = "Invalid username or password!";
-      }
+    let error = "";
 
-      if (error) {
-        errBox.textContent = error;
-        errBox.classList.remove("d-none");
-        return;
-      }
+    // Username format validation
+    if (!USERNAME_REGEX.test(username)) {
+      error = "Username must contain only letters and spaces.";
+      showError(error);
+      alert(error);
+      return;
+    }
 
-      // Success
-      localStorage.setItem("loggedin", "true");
-      localStorage.setItem("username", username);
-      window.location.href = "home.html";
-    });
-  </script>
+    // Password format validation
+    if (password.length < 6) {
+      error = "Password must be at least 6 characters long.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    if (password.length > 12) {
+      error = "Password must not exceed 12 characters.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasDigit = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*]/.test(password);
+    const charTypeCount = [hasUpper, hasLower, hasDigit, hasSpecial].filter(Boolean).length;
+
+    if (charTypeCount < 3) {
+      error = "Password must contain at least 3 of the following: uppercase, lowercase, digit, special character.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    if (charTypeCount === 1) {
+      error = "Password cannot be made of only one character type.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    // Separate wrong-username vs wrong-password handling
+    if (username !== VALID_USER) {
+      error = "Incorrect username.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    if (password !== VALID_PASS) {
+      error = "Incorrect password.";
+      showError(error);
+      alert(error);
+      return;
+    }
+
+    // Success
+    localStorage.setItem("loggedin", "true");
+    localStorage.setItem("username", username);
+    window.location.href = "home.html";
+  });
+
+  function showError(message) {
+    errBox.textContent = message;
+    errBox.classList.remove("d-none", "alert-success");
+    errBox.classList.add("alert", "alert-danger");
+  }
+</script>
+
+
+
 </body>
 </html>
