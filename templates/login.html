@@ -106,7 +106,7 @@
     wrap.className = "text-center mt-4";
     wrap.innerHTML = `
       <button id="logoutBtn" class="btn btn-danger mr-2">Sign Out</button>
-      <a href="home.html" class="btn btn-primary">Go to Home</a>
+      <a href="/home.html" class="btn btn-primary">Go to Home</a>
     `;
     form.parentElement.appendChild(wrap);
 
@@ -185,7 +185,7 @@
     // Success
     localStorage.setItem("loggedin", "true");
     localStorage.setItem("username", username);
-    window.location.href = "home.html";
+    window.location.href = "/home";
   });
 
   function showError(message) {
