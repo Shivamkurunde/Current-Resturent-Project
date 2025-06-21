@@ -11,6 +11,22 @@ html {
     font-family: Roboto;
     font-weight: 500;
     font-size: 18px;
+    transition: all 0.3s ease; 
+    padding: 8px 12px; 
+    border-radius: 10px; 
+}
+
+.custom-nav-link:hover {
+    background-color: #183b56 !important; 
+    color: white !important;
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+.custom-nav-link:active {
+    background-color: #000000 !important; 
+    transform: translateY(0); 
+    box-shadow: none; 
 }
 .Logo {
     height: 75px;
@@ -29,7 +45,7 @@ html {
     justify-content: center;
 }
 
-/* Only background image movement */
+/*  background image movement */
 .Banner-section-bg-container::before {
     content: "";
     position: absolute;
@@ -39,7 +55,7 @@ html {
 
     background-image: 
         linear-gradient( rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4) ),
-        url("/Static/images/home/banner.jpg");
+        url("/static/images/home/banner.jpg");
         
     background-size: cover;
     background-position: center;
@@ -155,17 +171,6 @@ button:active {
     width: 87px;
 }
 
-.custom-nav-link:hover {
-    background-color: orange;
-    border-radius: 10px;
-    color: white !important;
-    font-weight: bold;
-}
-
-.custom-nav-link:active {
-    background-color: grey;
-    border-radius: 10px;
-}
 
 .Why-section-card-title {
     font-family: Roboto;
