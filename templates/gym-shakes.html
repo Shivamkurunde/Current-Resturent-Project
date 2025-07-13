@@ -8,87 +8,99 @@
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
     
     <link rel="stylesheet" href="/static/Experiment.css">
-           <script src="/static/Experiment.js"></script>
-
+    <script src="/static/Experiment.js"></script>
 </head>
 <body>
-
-
-        <div id="sectionGymShakesAndSmoothie">
-
-        <div class="container">
-            <div class="row">
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Avacardo Smoothie</h1>
-                        <p class="Dish-Price">Rs.320 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+    <div id="sectionGymShakes">
+        <div class="Gym-Shakes-Container">
+            <div class="container">
+                <div class="row">
+                    {% for shake in shakes %}
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="{{ shake.image }}" class="menu-item-image w-100" alt="{{ shake.name }}" />
+                            <h1 class="menu-card-title">{{ shake.name }}</h1>
+                            <p class="Dish-Price">Rs. {{ shake.price }}</p>
+                            <p class="dish-description">{{ shake.description }}</p>
+                            <p class="preparation-time"><small>Prep time: {{ shake.preparation_time }}</small></p>
+                            <div class="rating">
+                                <span class="stars">
+                                    {% for i in range(5) %}
+                                        {% if i < shake.rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="rating-text">({{ shake.rating }})</span>
+                            </div>
+                            <a href="" class="menu-item-link">
+                                Order Now
+                            </a>
+                            <div class="icon-container">
+                                <button class="btn add-to-cart-icon mr-auto" 
+                                        data-food-id="{{ shake.id }}" 
+                                        data-food-name="{{ shake.name }}" 
+                                        data-food-price="{{ shake.price }}">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/shakes and smoothies/almond-milk.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Almond Milk</h1>
-                        <p class="Dish-Price">Rs.70 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/shakes and smoothies/banana-shake.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Banana Penut Butter Shake </h1>
-                        <p class="Dish-Price">Rs.110 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-
-                    </div>
-                </div>
-
-
             </div>
         </div>
 
-        <div class=" d-flex flex-row justify-content-center align-items-end mb-3 ">
-                    <a href="/gym-food"> <button class="back-button  btn btn-primary mr-2">Back</button></a>
-                    <a href="/"> <button class="back-button  btn btn-primary">Go to Home</button></a>
+        <div class="d-flex justify-content-center align-items-end mb-3">
+            <a href="/"><button class="back-button btn btn-primary">Back</button></a>
         </div>
-
-
-
-
-
-
-
-
     </div>
 
+    <script>
+        // Enhanced cart functionality with database integration
+        document.addEventListener("DOMContentLoaded", function() {
+            var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
 
+            addToCartButtons.forEach(function(button) {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    
+                    const foodId = this.getAttribute('data-food-id');
+                    const foodName = this.getAttribute('data-food-name');
+                    const foodPrice = parseInt(this.getAttribute('data-food-price'));
+
+                    // Add to cart via API
+                    fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            food_item_id: foodId,
+                            quantity: 1
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert(foodName + " added to cart!");
+                            // Update cart display if cart is visible
+                            if (typeof updateCartDisplay === 'function') {
+                                updateCartDisplay();
+                            }
+                        } else {
+                            alert("Error adding item to cart: " + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error adding item to cart. Please try again.");
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

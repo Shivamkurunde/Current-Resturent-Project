@@ -2,147 +2,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
-    
     <link rel="stylesheet" href="/static/Experiment.css">
-      <script src="/static/Experiment.js"></script>
-
+    <script src="/static/Experiment.js"></script>
 </head>
 <body>
-
-
-
-
     <div id="sectionVeg">
-
         <div class="Veg-Container">
-
             <div class="container">
                 <div class="row">
-
-                    <div class="col-12 col-md-6 col-lg-3">
-                          <div class="shadow menu-item-card p-3 mb-3">
-                               <img src="/static/images/menu/veg/veg-biryani.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                               <h1 class="menu-card-title">Veg Biryani</h1>
-                               <p class="Dish-Price">Rs.120 </p>
-                                <a href="" class="menu-item-link">
-                                       Order Now
-                               </a>
-                              <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-                      </div>
-                    </div>
-
+                    {% for item in veg_items %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/veg/aloo-paratha.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                            <h1 class="menu-card-title">Aloo Paratha</h1>
-                            <p class="Dish-Price">Rs.150 </p>
-                            <a href="" class="menu-item-link">
-                                Order Now
-                            </a>
-                             <button class="btn add-to-cart-icon">
+                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
+                            <h1 class="menu-card-title">{{ item.name }}</h1>
+                            <p class="Dish-Price">Rs.{{ item.price }} </p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">({{ item.rating or '3.5' }})</span>
+                            </div>
+                            <a href="" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto"
+                                        data-food-id="{{ item._id }}"
+                                        data-food-name="{{ item.name }}"
+                                        data-food-price="{{ item.price }}"
+                                        data-food-image="{{ item.image }}">
                                     <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-
+                                </button>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/veg/dal-tadka.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                            <h1 class="menu-card-title">Dal Tadka</h1>
-                            <p class="Dish-Price">Rs.120 </p>
-                            <a href="" class="menu-item-link">
-                                Order Now
-                            </a>
-                            <button class="btn add-to-cart-icon">
-                                    <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-
-                        </div>
-                    </div>
-                    
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/veg/Aloo-Gobi.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                            <h1 class="menu-card-title">Aloo Gobi</h1>
-                            <p class="Dish-Price">Rs.180 </p>
-                            <a href="" class="menu-item-link">
-                                Order Now
-                            </a>
-                              <button class="btn add-to-cart-icon">
-                                    <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-
-
-                        </div>
-                    </div>
-
+                    {% endfor %}
                 </div>
             </div>
-
-            <div class=" d-flex justify-content-center align-items-end mb-3" >
-               <a href="/"> <button class="back-button  btn btn-primary ">Back</button></a>
+            <div class="d-flex justify-content-center align-items-end mb-3">
+                <a href="/"> <button class="back-button btn btn-primary">Back</button></a>
             </div>
-
         </div>
-
     </div>
-
-
-
-
-    <script>
-    function getCart() {
-        var cart = localStorage.getItem("cart");
-        return cart ? JSON.parse(cart) : [];
-    }
-
-    function saveCart(cart) {
-        localStorage.setItem("cart", JSON.stringify(cart));
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
-
-        addToCartButtons.forEach(function(button) {
-            button.addEventListener("click", function(event) {
-                var card = event.target.closest(".menu-item-card");
-
-                var name = card.querySelector(".menu-card-title").textContent.trim();
-                var priceText = card.querySelector(".Dish-Price").textContent.trim(); // "Rs.120"
-                var price = parseInt(priceText.replace(/[^\d]/g, ""));
-
-                var cart = getCart();
-                var existingItem = cart.find(item => item.name === name);
-
-                if (existingItem) {
-                    existingItem.quantity += 1;
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
+    addToCartButtons.forEach(function(button) {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const foodId = this.getAttribute('data-food-id');
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    food_item_id: foodId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Added to cart!");
                 } else {
-                    cart.push({
-                        name: name,
-                        priceText: priceText,
-                        price: price,
-                        quantity: 1
-                    });
+                    alert("Error adding item to cart: " + data.error);
                 }
-
-                saveCart(cart);
-                alert(name + " added to cart!");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error adding item to cart. Please try again.");
             });
         });
     });
+});
 </script>
-
-
- 
 </body>
 </html>

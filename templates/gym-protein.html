@@ -8,100 +8,99 @@
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
     
     <link rel="stylesheet" href="/static/Experiment.css">
-          <script src="/static/Experiment.js"></script>
-    
+    <script src="/static/Experiment.js"></script>
 </head>
 <body>
-
-    
-    <div id="sectionGymHighProtien">
-
-        <div class="container">
-            <div class="row">
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/High Protein/Paneer-Tikha.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Paneer Tikkha</h1>
-                        <p class="Dish-Price">Rs.260 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+    <div id="sectionGymProtein">
+        <div class="Gym-Protein-Container">
+            <div class="container">
+                <div class="row">
+                    {% for protein in proteins %}
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="{{ protein.image }}" class="menu-item-image w-100" alt="{{ protein.name }}" />
+                            <h1 class="menu-card-title">{{ protein.name }}</h1>
+                            <p class="Dish-Price">Rs. {{ protein.price }}</p>
+                            <p class="dish-description">{{ protein.description }}</p>
+                            <p class="preparation-time"><small>Prep time: {{ protein.preparation_time }}</small></p>
+                            <div class="rating">
+                                <span class="stars">
+                                    {% for i in range(5) %}
+                                        {% if i < protein.rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="rating-text">({{ protein.rating }})</span>
+                            </div>
+                            <a href="" class="menu-item-link">
+                                Order Now
+                            </a>
+                            <div class="icon-container">
+                                <button class="btn add-to-cart-icon mr-auto" 
+                                        data-food-id="{{ protein.id }}" 
+                                        data-food-name="{{ protein.name }}" 
+                                        data-food-price="{{ protein.price }}">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/High Protein/Palak-Paneer.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Palak Paneer</h1>
-                        <p class="Dish-Price">Rs.280 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/High Protein/Rajma-Chawal.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Rajma Chawal</h1>
-                        <p class="Dish-Price">Rs.100 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/High Protein/avocado-toast.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Multigrain Toast with Avacado </h1>
-                        <p class="Dish-Price">Rs.290 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-
             </div>
         </div>
 
-         <div class=" d-flex flex-row justify-content-center align-items-end mb-3 ">
-                    <a href="/gym-food"> <button class=" back-button btn btn-primary mr-2">Back</button></a>
-                    <a href="/"> <button class="back-button btn btn-primary">Go to Home</button></a>
+        <div class="d-flex justify-content-center align-items-end mb-3">
+            <a href="/"><button class="back-button btn btn-primary">Back</button></a>
         </div>
-
-
-
-
     </div>
 
+    <script>
+        // Enhanced cart functionality with database integration
+        document.addEventListener("DOMContentLoaded", function() {
+            var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
 
- 
+            addToCartButtons.forEach(function(button) {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    
+                    const foodId = this.getAttribute('data-food-id');
+                    const foodName = this.getAttribute('data-food-name');
+                    const foodPrice = parseInt(this.getAttribute('data-food-price'));
+
+                    // Add to cart via API
+                    fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            food_item_id: foodId,
+                            quantity: 1
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert(foodName + " added to cart!");
+                            // Update cart display if cart is visible
+                            if (typeof updateCartDisplay === 'function') {
+                                updateCartDisplay();
+                            }
+                        } else {
+                            alert("Error adding item to cart: " + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error adding item to cart. Please try again.");
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

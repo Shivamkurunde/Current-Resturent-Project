@@ -1,54 +1,468 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from flask_pymongo import PyMongo
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+import json
+from bson import ObjectId
 
 app = Flask(__name__)
+app.secret_key = "your_super_secret_key_change_this_in_production"
+
+# MongoDB setup
+# For local MongoDB: app.config["MONGO_URI"] = "mongodb://localhost:27017/foodApp"
+# For MongoDB Atlas (cloud): Use the connection string below
+app.config["MONGO_URI"] = "mongodb://localhost:27017/foodApp"
+mongo = PyMongo(app)
+
+# Initialize database with sample data
+def init_database():
+    """Initialize database with sample food items if they don't exist"""
+    if mongo.db.food_items.count_documents({}) == 0:
+        sample_food_items = [
+            {
+                "name": "Veg Biryani",
+                "category": "veg",
+                "price": 120,
+                "description": "Aromatic basmati rice cooked with fresh vegetables and aromatic spices",
+                "image": "/static/images/menu/veg/veg-biryani.jpg",
+                "available": True,
+                "rating": 4.5,
+                "preparation_time": "25 minutes"
+            },
+            {
+                "name": "Aloo Paratha",
+                "category": "veg",
+                "price": 150,
+                "description": "Whole wheat flatbread stuffed with spiced potato mixture",
+                "image": "/static/images/menu/veg/aloo-paratha.jpg",
+                "available": True,
+                "rating": 4.3,
+                "preparation_time": "15 minutes"
+            },
+            {
+                "name": "Dal Tadka",
+                "category": "veg",
+                "price": 120,
+                "description": "Yellow lentils tempered with aromatic spices and herbs",
+                "image": "/static/images/menu/veg/dal-tadka.jpg",
+                "available": True,
+                "rating": 4.2,
+                "preparation_time": "20 minutes"
+            },
+            {
+                "name": "Aloo Gobi",
+                "category": "veg",
+                "price": 180,
+                "description": "Potato and cauliflower curry with Indian spices",
+                "image": "/static/images/menu/veg/Aloo-Gobi.jpg",
+                "available": True,
+                "rating": 4.4,
+                "preparation_time": "30 minutes"
+            },
+            {
+                "name": "Chocolate Ice Cream",
+                "category": "desserts",
+                "price": 80,
+                "description": "Rich and creamy chocolate ice cream",
+                "image": "/static/images/menu/desserts and icream/desserts-icecream.jpg",
+                "available": True,
+                "rating": 4.6,
+                "preparation_time": "5 minutes"
+            },
+            {
+                "name": "Protein Shake",
+                "category": "gym",
+                "price": 200,
+                "description": "High protein shake with whey protein and fruits",
+                "image": "/static/images/menu/gym/gym-food.jpg",
+                "available": True,
+                "rating": 4.7,
+                "preparation_time": "10 minutes"
+            },
+            {
+                "name": "Pani Puri",
+                "category": "street-chaat",
+                "price": 60,
+                "description": "Crispy puris filled with spiced potato and tangy water",
+                "image": "/static/images/menu/street-chaat/street-chaat.jpg",
+                "available": True,
+                "rating": 4.8,
+                "preparation_time": "15 minutes"
+            }
+        ]
+        mongo.db.food_items.insert_many(sample_food_items)
+        print("Database initialized with sample food items!")
+
+# -------------- AUTH ROUTES -----------------
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        users = mongo.db.users
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form.get('email', '')  # Optional email field
+
+        # Check if username already exists
+        if users.find_one({'username': username}):
+            flash("Username already exists.")
+            return redirect(url_for('register'))
+
+        # Create user document with hashed password
+        user_doc = {
+            'username': username,
+            'password': generate_password_hash(password),
+            'email': email,
+            'created_at': datetime.utcnow(),
+            'role': 'customer',
+            'address': '',
+            'phone': ''
+        }
+        
+        users.insert_one(user_doc)
+        flash("Registered successfully. Please log in.")
+        return redirect(url_for('login'))
+    
+    return render_template('register.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        users = mongo.db.users
+        username = request.form['username']
+        password = request.form['password']
+
+        user = users.find_one({'username': username})
+        if user and check_password_hash(user['password'], password):
+            session['user'] = username
+            session['user_id'] = str(user['_id'])
+            session['role'] = user.get('role', 'customer')
+            flash("Login successful.")
+            return redirect(url_for('home'))
+        flash("Invalid username or password.")
+    
+    return render_template('login.html')
+
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        users = mongo.db.users
+        username = request.form['username']
+        new_password = request.form['new_password']
+
+        user = users.find_one({'username': username})
+        if user:
+            hashed_password = generate_password_hash(new_password)
+            users.update_one(
+                {'username': username}, 
+                {'$set': {'password': hashed_password}}
+            )
+            flash("Password reset successfully.")
+            return redirect(url_for('login'))
+        flash("Username not found.")
+    
+    return render_template('forgot_password.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash("Logged out successfully.")
+    return redirect(url_for('login'))
+
+# -------------- MAIN ROUTES -----------------
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    # Get food items by category for the home page
+    categories = ['veg', 'desserts', 'gym', 'street-chaat']
+    food_by_category = {}
+    
+    for category in categories:
+        food_by_category[category] = list(mongo.db.food_items.find(
+            {'category': category, 'available': True}
+        ).limit(4))
+    
+    return render_template('home.html', 
+                         user=session['user'], 
+                         food_by_category=food_by_category)
 
 @app.route('/desserts')
 def desserts():
-    return render_template('Desserts.html')
+    desserts = list(mongo.db.food_items.find({'category': 'desserts', 'available': True}))
+    return render_template('desserts.html', desserts=desserts)
 
 @app.route('/ice-cream')
 def ice_cream():
-    return render_template('ice-cream.html')
+    ice_creams = list(mongo.db.food_items.find({'category': 'desserts', 'available': True}))
+    return render_template('ice-cream.html', ice_creams=ice_creams)
 
 @app.route('/Dessert-Icream')
 def dessert_icecream():
-    return render_template('Dessert-Icream.html')
+    desserts = list(mongo.db.food_items.find({'category': 'desserts', 'available': True}))
+    return render_template('Dessert-Icream.html', desserts=desserts)
 
 @app.route('/gym-food')
 def gym_food():
-    return render_template('gym-food.html')
+    gym_foods = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    return render_template('gym-food.html', gym_foods=gym_foods)
 
 @app.route('/gym-protein')
 def gym_protein():
-    return render_template('gym-protein.html')
+    proteins = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    return render_template('gym-protein.html', proteins=proteins)
 
 @app.route('/gym-detox')
 def gym_detox():
-    return render_template('gym-detox.html')
+    detox_items = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    return render_template('gym-detox.html', detox_items=detox_items)
 
 @app.route('/gym-shakes')
 def gym_shakes():
-    return render_template('gym-shakes.html')
+    shakes = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    return render_template('gym-shakes.html', shakes=shakes)
 
 @app.route('/street-chaat')
 def street_chaat():
-    return render_template('street-chaat.html')
+    chaat_items = list(mongo.db.food_items.find({'category': 'street-chaat', 'available': True}))
+    return render_template('street-chaat.html', chaat_items=chaat_items)
 
 @app.route('/veg')
 def veg():
-    return render_template('veg.html')
+    veg_items = list(mongo.db.food_items.find({'category': 'veg', 'available': True}))
+    return render_template('veg.html', veg_items=veg_items)
 
 @app.route('/cart')
 def cart():
-    return render_template('cart.html')
+    if 'user_id' not in session:
+        flash("Please login to access your cart.")
+        return redirect(url_for('login'))
+    user_id = session['user_id']
+    cart_items = list(mongo.db.cart.find({'user_id': user_id}))
+    # Populate food item details
+    for item in cart_items:
+        try:
+            food_item = mongo.db.food_items.find_one({'_id': ObjectId(item['food_item_id'])})
+        except Exception:
+            food_item = None
+        if food_item:
+            item['name'] = food_item.get('name')
+            item['price'] = food_item.get('price')
+            item['image'] = food_item.get('image')
+            item['description'] = food_item.get('description')
+        item['cart_id'] = str(item['_id'])
+        item['food_item_id'] = str(item['food_item_id'])
+    return render_template('cart.html', cart_items=cart_items, user=session['user'])
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+# -------------- API ROUTES FOR CART AND ORDERS -----------------
+
+@app.route('/api/cart', methods=['GET'])
+def get_cart():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    user_id = session['user_id']
+    cart_items = list(mongo.db.cart.find({'user_id': user_id}))
+    # Populate food item details
+    for item in cart_items:
+        try:
+            food_item = mongo.db.food_items.find_one({'_id': ObjectId(item['food_item_id'])})
+        except Exception:
+            food_item = None
+        if food_item:
+            item['food_details'] = food_item
+            item['name'] = food_item.get('name')
+            item['price'] = food_item.get('price')
+            item['image'] = food_item.get('image')
+            item['description'] = food_item.get('description')
+        # Convert ObjectId to string for frontend
+        item['cart_id'] = str(item['_id'])
+        item['food_item_id'] = str(item['food_item_id'])
+    return jsonify(cart_items)
+
+@app.route('/api/cart/add', methods=['POST'])
+def add_to_cart():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    data = request.get_json()
+    food_item_id = data.get('food_item_id')
+    quantity = data.get('quantity', 1)
+    try:
+        food_item_id_obj = ObjectId(food_item_id)
+    except Exception:
+        return jsonify({'error': 'Invalid food item ID'}), 400
+    # Check if food item exists
+    food_item = mongo.db.food_items.find_one({'_id': food_item_id_obj})
+    if not food_item:
+        return jsonify({'error': 'Food item not found'}), 404
+    user_id = session['user_id']
+    # Check if item already in cart
+    existing_item = mongo.db.cart.find_one({
+        'user_id': user_id,
+        'food_item_id': str(food_item_id_obj)
+    })
+    if existing_item:
+        # Update quantity
+        mongo.db.cart.update_one(
+            {'_id': existing_item['_id']},
+            {'$inc': {'quantity': quantity}}
+        )
+    else:
+        # Add new item to cart
+        cart_item = {
+            'user_id': user_id,
+            'food_item_id': str(food_item_id_obj),
+            'quantity': quantity,
+            'added_at': datetime.utcnow()
+        }
+        mongo.db.cart.insert_one(cart_item)
+    return jsonify({'message': 'Item added to cart successfully'})
+
+@app.route('/api/cart/update', methods=['PUT'])
+def update_cart():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    data = request.get_json()
+    cart_item_id = data.get('cart_item_id')
+    quantity = data.get('quantity')
+    try:
+        cart_item_id_obj = ObjectId(cart_item_id)
+    except Exception:
+        return jsonify({'error': 'Invalid cart item ID'}), 400
+    if quantity <= 0:
+        # Remove item if quantity is 0 or negative
+        mongo.db.cart.delete_one({'_id': cart_item_id_obj})
+    else:
+        # Update quantity
+        mongo.db.cart.update_one(
+            {'_id': cart_item_id_obj},
+            {'$set': {'quantity': quantity}}
+        )
+    return jsonify({'message': 'Cart updated successfully'})
+
+@app.route('/api/cart/remove/<cart_item_id>', methods=['DELETE'])
+def remove_from_cart(cart_item_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    try:
+        cart_item_id_obj = ObjectId(cart_item_id)
+    except Exception:
+        return jsonify({'error': 'Invalid cart item ID'}), 400
+    mongo.db.cart.delete_one({'_id': cart_item_id_obj})
+    return jsonify({'message': 'Item removed from cart'})
+
+@app.route('/api/orders', methods=['POST'])
+def create_order():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    
+    data = request.get_json()
+    user_id = session['user_id']
+    
+    # Get user's cart items
+    cart_items = list(mongo.db.cart.find({'user_id': user_id}))
+    
+    if not cart_items:
+        return jsonify({'error': 'Cart is empty'}), 400
+    
+    # Calculate total and prepare order items
+    total_amount = 0
+    order_items = []
+    
+    for cart_item in cart_items:
+        food_item = mongo.db.food_items.find_one({'_id': cart_item['food_item_id']})
+        if food_item:
+            item_total = food_item['price'] * cart_item['quantity']
+            total_amount += item_total
+            
+            order_items.append({
+                'food_item_id': cart_item['food_item_id'],
+                'food_name': food_item['name'],
+                'quantity': cart_item['quantity'],
+                'price': food_item['price'],
+                'item_total': item_total
+            })
+    
+    # Create order document
+    order = {
+        'user_id': user_id,
+        'username': session['user'],
+        'items': order_items,
+        'total_amount': total_amount,
+        'status': 'pending',
+        'order_date': datetime.utcnow(),
+        'delivery_address': data.get('delivery_address', ''),
+        'phone': data.get('phone', ''),
+        'payment_method': data.get('payment_method', 'cash_on_delivery')
+    }
+    
+    # Insert order
+    result = mongo.db.orders.insert_one(order)
+    
+    # Clear user's cart
+    mongo.db.cart.delete_many({'user_id': user_id})
+    
+    return jsonify({
+        'message': 'Order placed successfully',
+        'order_id': str(result.inserted_id),
+        'total_amount': total_amount
+    })
+
+@app.route('/api/orders/<user_id>', methods=['GET'])
+def get_user_orders(user_id):
+    if 'user_id' not in session or session['user_id'] != user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    orders = list(mongo.db.orders.find({'user_id': user_id}).sort('order_date', -1))
+    return jsonify(orders)
+
+# -------------- ADMIN ROUTES -----------------
+
+@app.route('/admin')
+def admin_dashboard():
+    if 'user' not in session or session.get('role') != 'admin':
+        flash("Access denied. Admin privileges required.")
+        return redirect(url_for('home'))
+    
+    # Get statistics
+    total_users = mongo.db.users.count_documents({})
+    total_orders = mongo.db.orders.count_documents({})
+    total_food_items = mongo.db.food_items.count_documents({})
+    recent_orders = list(mongo.db.orders.find().sort('order_date', -1).limit(5))
+    
+    return render_template('admin_dashboard.html', 
+                         total_users=total_users,
+                         total_orders=total_orders,
+                         total_food_items=total_food_items,
+                         recent_orders=recent_orders)
+
+@app.route('/admin/food-items', methods=['GET', 'POST'])
+def admin_food_items():
+    if 'user' not in session or session.get('role') != 'admin':
+        flash("Access denied. Admin privileges required.")
+        return redirect(url_for('home'))
+    
+    if request.method == 'POST':
+        # Add new food item
+        food_item = {
+            'name': request.form['name'],
+            'category': request.form['category'],
+            'price': float(request.form['price']),
+            'description': request.form['description'],
+            'image': request.form['image'],
+            'available': True,
+            'rating': 0,
+            'preparation_time': request.form['preparation_time']
+        }
+        mongo.db.food_items.insert_one(food_item)
+        flash("Food item added successfully!")
+        return redirect(url_for('admin_food_items'))
+    
+    food_items = list(mongo.db.food_items.find())
+    return render_template('admin_food_items.html', food_items=food_items)
 
 if __name__ == '__main__':
+    # Initialize database with sample data
+    init_database()
     app.run(debug=True)

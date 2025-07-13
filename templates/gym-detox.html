@@ -6,100 +6,101 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
-       
+    
     <link rel="stylesheet" href="/static/Experiment.css">
-  <script src="/static/Experiment.js"></script>
-
+    <script src="/static/Experiment.js"></script>
 </head>
 <body>
-
-
-        <div id="sectionGymRefreshingAndDetoxDrinks">
-
-        <div class="container">
-            <div class="row">
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/Detox drinks/Mint-cucumber.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Mint Cucumber Water</h1>
-                        <p class="Dish-Price">Rs.50 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+    <div id="sectionGymDetox">
+        <div class="Gym-Detox-Container">
+            <div class="container">
+                <div class="row">
+                    {% for detox in detox_items %}
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="{{ detox.image }}" class="menu-item-image w-100" alt="{{ detox.name }}" />
+                            <h1 class="menu-card-title">{{ detox.name }}</h1>
+                            <p class="Dish-Price">Rs. {{ detox.price }}</p>
+                            <p class="dish-description">{{ detox.description }}</p>
+                            <p class="preparation-time"><small>Prep time: {{ detox.preparation_time }}</small></p>
+                            <div class="rating">
+                                <span class="stars">
+                                    {% for i in range(5) %}
+                                        {% if i < detox.rating|int %}
+                                            <i class="fas fa-star text-warning"></i>
+                                        {% else %}
+                                            <i class="far fa-star text-warning"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <span class="rating-text">({{ detox.rating }})</span>
+                            </div>
+                            <a href="" class="menu-item-link">
+                                Order Now
+                            </a>
+                            <div class="icon-container">
+                                <button class="btn add-to-cart-icon mr-auto" 
+                                        data-food-id="{{ detox.id }}" 
+                                        data-food-name="{{ detox.name }}" 
+                                        data-food-price="{{ detox.price }}">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                    {% endfor %}
                 </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/Detox drinks/Carrot-Beetroot-juice.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Carrot Beetroot Detox juice</h1>
-                        <p class="Dish-Price">Rs.50 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/Detox drinks/cocunat-water-chia-seeds-drink.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Cocunet Water with Chia Seeds</h1>
-                        <p class="Dish-Price">Rs.120 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/gym/Detox drinks/Aleovera-juice.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Aloe Vera Juice </h1>
-                        <p class="Dish-Price">Rs.60 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
-                    </div>
-                </div>
-
-
             </div>
         </div>
 
-       <div class=" d-flex flex-row justify-content-center align-items-end mb-3 ">
-                    <a href="/gym-food"> <button class="back-button btn btn-primary mr-2">Back</button></a>
-                    <a href="/"> <button class="back-button btn btn-primary">Go to Home</button></a>
+        <div class="d-flex justify-content-center align-items-end mb-3">
+            <a href="/"><button class="back-button btn btn-primary">Back</button></a>
         </div>
-
-
-
     </div>
 
-    
+    <script>
+        // Enhanced cart functionality with database integration
+        document.addEventListener("DOMContentLoaded", function() {
+            var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
+
+            addToCartButtons.forEach(function(button) {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    
+                    const foodId = this.getAttribute('data-food-id');
+                    const foodName = this.getAttribute('data-food-name');
+                    const foodPrice = parseInt(this.getAttribute('data-food-price'));
+
+                    // Add to cart via API
+                    fetch('/api/cart/add', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            food_item_id: foodId,
+                            quantity: 1
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert(foodName + " added to cart!");
+                            // Update cart display if cart is visible
+                            if (typeof updateCartDisplay === 'function') {
+                                updateCartDisplay();
+                            }
+                        } else {
+                            alert("Error adding item to cart: " + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert("Error adding item to cart. Please try again.");
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>
