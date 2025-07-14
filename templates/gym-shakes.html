@@ -15,10 +15,16 @@
         <div class="Gym-Shakes-Container">
             <div class="container">
                 <div class="row">
+                    {% set shake_images = [
+                        '/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg',
+                        '/static/images/menu/gym/shakes and smoothies/almond-milk.jpg',
+                        '/static/images/menu/gym/shakes and smoothies/banana-shake.jpg',
+                        '/static/images/menu/gym/shakes and smoothies/Shakes-smoothies.jpg'
+                    ] %}
                     {% for shake in shakes %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ shake.image }}" class="menu-item-image w-100" alt="{{ shake.name }}" />
+                            <img src="{{ shake_images[loop.index0 % shake_images|length] }}" class="menu-item-image w-100" alt="{{ shake.name }}" />
                             <h1 class="menu-card-title">{{ shake.name }}</h1>
                             <p class="Dish-Price">Rs. {{ shake.price }}</p>
                             <p class="dish-description">{{ shake.description }}</p>
@@ -54,7 +60,7 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-end mb-3">
-            <a href="/"><button class="back-button btn btn-primary">Back</button></a>
+            <a href="/gym-food"><button class="back-button btn btn-primary">Back</button></a>
         </div>
     </div>
 

@@ -93,6 +93,134 @@ def init_database():
         mongo.db.food_items.insert_many(sample_food_items)
         print("Database initialized with sample food items!")
 
+def insert_sample_gym_food_items():
+    sample_gym_items = [
+        {
+            "name": "Avocado Smoothie",
+            "category": "gym",
+            "subcategory": "shakes",
+            "price": 320,
+            "description": "Creamy avocado smoothie with honey and milk",
+            "image": "/static/images/menu/gym/avocado-smoothie.jpg",
+            "available": True,
+            "rating": 4.8,
+            "preparation_time": "5 minutes"
+        },
+        {
+            "name": "Almond Milk",
+            "category": "gym",
+            "subcategory": "shakes",
+            "price": 70,
+            "description": "Fresh almond milk, lightly sweetened",
+            "image": "/static/images/menu/gym/almond-milk.jpg",
+            "available": True,
+            "rating": 4.6,
+            "preparation_time": "3 minutes"
+        },
+        {
+            "name": "Banana Peanut Butter Shake",
+            "category": "gym",
+            "subcategory": "shakes",
+            "price": 110,
+            "description": "Banana shake with peanut butter and milk",
+            "image": "/static/images/menu/gym/banana-peanut-shake.jpg",
+            "available": True,
+            "rating": 4.7,
+            "preparation_time": "4 minutes"
+        },
+        {
+            "name": "Paneer Tikka",
+            "category": "gym",
+            "subcategory": "protein",
+            "price": 260,
+            "description": "Grilled paneer with spices",
+            "image": "/static/images/menu/gym/paneer-tikka.jpg",
+            "available": True,
+            "rating": 4.9,
+            "preparation_time": "15 minutes"
+        },
+        {
+            "name": "Palak Paneer",
+            "category": "gym",
+            "subcategory": "protein",
+            "price": 280,
+            "description": "Spinach curry with paneer cubes",
+            "image": "/static/images/menu/gym/palak-paneer.jpg",
+            "available": True,
+            "rating": 4.8,
+            "preparation_time": "20 minutes"
+        },
+        {
+            "name": "Rajma Chawal",
+            "category": "gym",
+            "subcategory": "protein",
+            "price": 100,
+            "description": "Kidney beans curry with rice",
+            "image": "/static/images/menu/gym/rajma-chawal.jpg",
+            "available": True,
+            "rating": 4.7,
+            "preparation_time": "25 minutes"
+        },
+        {
+            "name": "Multigrain Toast with Avocado",
+            "category": "gym",
+            "subcategory": "protein",
+            "price": 290,
+            "description": "Multigrain toast topped with avocado",
+            "image": "/static/images/menu/gym/avocado-toast.jpg",
+            "available": True,
+            "rating": 4.6,
+            "preparation_time": "7 minutes"
+        },
+        {
+            "name": "Mint Cucumber Water",
+            "category": "gym",
+            "subcategory": "detox",
+            "price": 50,
+            "description": "Refreshing water with mint and cucumber",
+            "image": "/static/images/menu/gym/mint-cucumber-water.jpg",
+            "available": True,
+            "rating": 4.5,
+            "preparation_time": "2 minutes"
+        },
+        {
+            "name": "Carrot Beetroot Detox Juice",
+            "category": "gym",
+            "subcategory": "detox",
+            "price": 50,
+            "description": "Detox juice with carrot and beetroot",
+            "image": "/static/images/menu/gym/carrot-beetroot-juice.jpg",
+            "available": True,
+            "rating": 4.6,
+            "preparation_time": "3 minutes"
+        },
+        {
+            "name": "Coconut Water with Chia Seeds",
+            "category": "gym",
+            "subcategory": "detox",
+            "price": 120,
+            "description": "Coconut water with chia seeds",
+            "image": "/static/images/menu/gym/coconut-chia.jpg",
+            "available": True,
+            "rating": 4.7,
+            "preparation_time": "2 minutes"
+        },
+        {
+            "name": "Aloe Vera Juice",
+            "category": "gym",
+            "subcategory": "detox",
+            "price": 60,
+            "description": "Aloe vera juice for detox",
+            "image": "/static/images/menu/gym/aloe-vera-juice.jpg",
+            "available": True,
+            "rating": 4.6,
+            "preparation_time": "2 minutes"
+        }
+    ]
+    for item in sample_gym_items:
+        if not mongo.db.food_items.find_one({"name": item["name"]}):
+            mongo.db.food_items.insert_one(item)
+
 # -------------- AUTH ROUTES -----------------
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -211,17 +339,17 @@ def gym_food():
 
 @app.route('/gym-protein')
 def gym_protein():
-    proteins = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    proteins = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'protein', 'available': True}))
     return render_template('gym-protein.html', proteins=proteins)
 
 @app.route('/gym-detox')
 def gym_detox():
-    detox_items = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    detox_items = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'detox', 'available': True}))
     return render_template('gym-detox.html', detox_items=detox_items)
 
 @app.route('/gym-shakes')
 def gym_shakes():
-    shakes = list(mongo.db.food_items.find({'category': 'gym', 'available': True}))
+    shakes = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'shakes', 'available': True}))
     return render_template('gym-shakes.html', shakes=shakes)
 
 @app.route('/street-chaat')
@@ -465,4 +593,5 @@ def admin_food_items():
 if __name__ == '__main__':
     # Initialize database with sample data
     init_database()
+    insert_sample_gym_food_items()
     app.run(debug=True)

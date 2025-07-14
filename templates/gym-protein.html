@@ -15,10 +15,17 @@
         <div class="Gym-Protein-Container">
             <div class="container">
                 <div class="row">
+                    {% set protein_images = [
+                        '/static/images/menu/gym/High Protein/Paneer-Tikha.jpg',
+                        '/static/images/menu/gym/High Protein/Palak-Paneer.jpg',
+                        '/static/images/menu/gym/High Protein/Rajma-Chawal.jpg',
+                        '/static/images/menu/gym/High Protein/avocado-toast.jpg',
+                        '/static/images/menu/gym/High Protein/High-Protein-Dishesh.jpg'
+                    ] %}
                     {% for protein in proteins %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ protein.image }}" class="menu-item-image w-100" alt="{{ protein.name }}" />
+                            <img src="{{ protein_images[loop.index0 % protein_images|length] }}" class="menu-item-image w-100" alt="{{ protein.name }}" />
                             <h1 class="menu-card-title">{{ protein.name }}</h1>
                             <p class="Dish-Price">Rs. {{ protein.price }}</p>
                             <p class="dish-description">{{ protein.description }}</p>
@@ -54,7 +61,7 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-end mb-3">
-            <a href="/"><button class="back-button btn btn-primary">Back</button></a>
+            <a href="/gym-food"><button class="back-button btn btn-primary">Back</button></a>
         </div>
     </div>
 

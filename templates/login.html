@@ -55,15 +55,6 @@
       margin-top: 20px;
       color: #7f8c8d;
     }
-    #togglePassword {
-      position: absolute;
-      top: 50%;
-      right: 15px;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
     .forgot-password {
       font-size: 14px;
       color: #2c3e50;
@@ -74,6 +65,24 @@
     .forgot-password:hover {
       color: #e74c3c;
       text-decoration: underline;
+    }
+    /* Password toggle container styling like registration */
+    .password-container {
+      position: relative;
+    }
+    .toggle-password {
+      position: absolute;
+      padding-top: 30px;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #7f8c8d;
+    }
+    .toggle-password:hover {
+      color: #2c3e50;
     }
   </style>
 </head>
@@ -98,10 +107,12 @@
           <input type="text" name="username" class="form-control" placeholder="Enter username" required>
         </div>
 
-        <div class="mb-3 position-relative">
+        <div class="mb-3 password-container">
           <label class="form-label">Password</label>
           <input type="password" name="password" id="password" class="form-control" placeholder="Enter password" required>
-          <button type="button" id="togglePassword"><i class="fas fa-eye"></i></button>
+          <button type="button" class="toggle-password" id="togglePassword">
+            <i class="fas fa-eye"></i>
+          </button>
         </div>
 
         <a href="{{ url_for('forgot_password') }}" class="forgot-password">Forgot Password?</a>
@@ -117,7 +128,8 @@
   </div>
 
   <script>
-    document.getElementById('togglePassword').addEventListener('click', function () {
+    // Password toggle functionality (same as registration)
+    document.getElementById('togglePassword').addEventListener('click', function() {
       const password = document.getElementById('password');
       const icon = this.querySelector('i');
       if (password.type === 'password') {
