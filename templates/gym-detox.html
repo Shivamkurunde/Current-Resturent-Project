@@ -15,41 +15,29 @@
         <div class="Gym-Detox-Container">
             <div class="container">
                 <div class="row">
-                    {% set detox_images = [
-                        '/static/images/menu/gym/Detox drinks/Mint-cucumber.jpg',
-                        '/static/images/menu/gym/Detox drinks/Carrot-Beetroot-juice.jpg',
-                        '/static/images/menu/gym/Detox drinks/cocunat-water-chia-seeds-drink.jpg',
-                        '/static/images/menu/gym/Detox drinks/Aleovera-juice.jpg',
-                        '/static/images/menu/gym/Detox drinks/Detox-Drinks.jpg'
-                    ] %}
-                    {% for detox in detox_items %}
+                    {% for item in detox_items %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ detox_images[loop.index0 % detox_images|length] }}" class="menu-item-image w-100" alt="{{ detox.name }}" />
-                            <h1 class="menu-card-title">{{ detox.name }}</h1>
-                            <p class="Dish-Price">Rs. {{ detox.price }}</p>
-                            <p class="dish-description">{{ detox.description }}</p>
-                            <p class="preparation-time"><small>Prep time: {{ detox.preparation_time }}</small></p>
+                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
+                            <h1 class="menu-card-title">{{ item.name }}</h1>
+                            <p class="Dish-Price">Rs.{{ item.price }}</p>
                             <div class="rating">
                                 <span class="stars">
-                                    {% for i in range(5) %}
-                                        {% if i < detox.rating|int %}
-                                            <i class="fas fa-star text-warning"></i>
-                                        {% else %}
-                                            <i class="far fa-star text-warning"></i>
-                                        {% endif %}
-                                    {% endfor %}
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
                                 </span>
-                                <span class="rating-text">({{ detox.rating }})</span>
+                                <span class="rating-text">({{ item.rating or '3.5' }})</span>
                             </div>
-                            <a href="" class="menu-item-link">
-                                Order Now
-                            </a>
-                            <div class="icon-container">
-                                <button class="btn add-to-cart-icon mr-auto" 
-                                        data-food-id="{{ detox.id }}" 
-                                        data-food-name="{{ detox.name }}" 
-                                        data-food-price="{{ detox.price }}">
+                            <a href="" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto"
+                                        data-food-item-id="{{ item._id|string }}"
+                                        data-food-name="{{ item.name }}"
+                                        data-food-price="{{ item.price }}"
+                                        data-food-image="{{ item.image }}">
                                     <i class="fas fa-shopping-bag custom_icon"></i>
                                 </button>
                             </div>
@@ -61,7 +49,8 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-end mb-3">
-            <a href="/gym-food"><button class="back-button btn btn-primary">Back</button></a>
+            <a href="/gym-food"><button class="back-button btn btn-primary mr-2">Back</button></a>
+            <a href="/"> <button class="back-button btn btn-success">Back to Home</button></a>
         </div>
     </div>
 
@@ -74,7 +63,7 @@
                 button.addEventListener("click", function(event) {
                     event.preventDefault();
                     
-                    const foodId = this.getAttribute('data-food-id');
+                    const foodId = this.getAttribute('data-food-item-id');
                     const foodName = this.getAttribute('data-food-name');
                     const foodPrice = parseInt(this.getAttribute('data-food-price'));
 

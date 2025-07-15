@@ -15,40 +15,29 @@
         <div class="Gym-Shakes-Container">
             <div class="container">
                 <div class="row">
-                    {% set shake_images = [
-                        '/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg',
-                        '/static/images/menu/gym/shakes and smoothies/almond-milk.jpg',
-                        '/static/images/menu/gym/shakes and smoothies/banana-shake.jpg',
-                        '/static/images/menu/gym/shakes and smoothies/Shakes-smoothies.jpg'
-                    ] %}
-                    {% for shake in shakes %}
+                    {% for item in shakes %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ shake_images[loop.index0 % shake_images|length] }}" class="menu-item-image w-100" alt="{{ shake.name }}" />
-                            <h1 class="menu-card-title">{{ shake.name }}</h1>
-                            <p class="Dish-Price">Rs. {{ shake.price }}</p>
-                            <p class="dish-description">{{ shake.description }}</p>
-                            <p class="preparation-time"><small>Prep time: {{ shake.preparation_time }}</small></p>
+                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
+                            <h1 class="menu-card-title">{{ item.name }}</h1>
+                            <p class="Dish-Price">Rs.{{ item.price }}</p>
                             <div class="rating">
                                 <span class="stars">
-                                    {% for i in range(5) %}
-                                        {% if i < shake.rating|int %}
-                                            <i class="fas fa-star text-warning"></i>
-                                        {% else %}
-                                            <i class="far fa-star text-warning"></i>
-                                        {% endif %}
-                                    {% endfor %}
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
                                 </span>
-                                <span class="rating-text">({{ shake.rating }})</span>
+                                <span class="rating-text">({{ item.rating or '3.5' }})</span>
                             </div>
-                            <a href="" class="menu-item-link">
-                                Order Now
-                            </a>
-                            <div class="icon-container">
-                                <button class="btn add-to-cart-icon mr-auto" 
-                                        data-food-id="{{ shake.id }}" 
-                                        data-food-name="{{ shake.name }}" 
-                                        data-food-price="{{ shake.price }}">
+                            <a href="" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto"
+                                        data-food-item-id="{{ item._id|string }}"
+                                        data-food-name="{{ item.name }}"
+                                        data-food-price="{{ item.price }}"
+                                        data-food-image="{{ item.image }}">
                                     <i class="fas fa-shopping-bag custom_icon"></i>
                                 </button>
                             </div>
@@ -60,7 +49,8 @@
         </div>
 
         <div class="d-flex justify-content-center align-items-end mb-3">
-            <a href="/gym-food"><button class="back-button btn btn-primary">Back</button></a>
+            <a href="/gym-food"><button class="back-button btn btn-primary mr-2">Back</button></a>
+            <a href="/"> <button class="back-button btn btn-success">Back to Home</button></a>
         </div>
     </div>
 
@@ -73,7 +63,7 @@
                 button.addEventListener("click", function(event) {
                     event.preventDefault();
                     
-                    const foodId = this.getAttribute('data-food-id');
+                    const foodId = this.getAttribute('data-food-item-id');
                     const foodName = this.getAttribute('data-food-name');
                     const foodPrice = parseInt(this.getAttribute('data-food-price'));
 

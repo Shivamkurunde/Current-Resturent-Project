@@ -82,16 +82,132 @@ def init_database():
             {
                 "name": "Pani Puri",
                 "category": "street-chaat",
-                "price": 60,
+                "price": 50,
                 "description": "Crispy puris filled with spiced potato and tangy water",
-                "image": "/static/images/menu/street-chaat/street-chaat.jpg",
+                "image": "/static/images/menu/street-chaat/pani-puri.jpg",
                 "available": True,
                 "rating": 4.8,
+                "preparation_time": "10 minutes"
+            },
+            {
+                "name": "Samosa",
+                "category": "street-chaat",
+                "price": 40,
+                "description": "Crispy pastry filled with spicy potato mixture",
+                "image": "/static/images/menu/street-chaat/samosa.jpg",
+                "available": True,
+                "rating": 4.7,
+                "preparation_time": "8 minutes"
+            },
+            {
+                "name": "Missal Pav",
+                "category": "street-chaat",
+                "price": 150,
+                "description": "Spicy sprouted bean curry served with pav",
+                "image": "/static/images/menu/street-chaat/missal-pav.jpg",
+                "available": True,
+                "rating": 4.6,
+                "preparation_time": "12 minutes"
+            },
+            {
+                "name": "Chole Bhature",
+                "category": "street-chaat",
+                "price": 60,
+                "description": "Spicy chickpeas served with fried bread",
+                "image": "/static/images/menu/street-chaat/chole-bhature.jpg",
+                "available": True,
+                "rating": 4.9,
+                "preparation_time": "15 minutes"
+            },
+            {
+                "name": "Gajar Halwa",
+                "category": "desserts",
+                "price": 250,
+                "description": "Traditional Indian carrot pudding with nuts and ghee",
+                "image": "/static/images/menu/desserts and icream/Deserts/gajar-halwa.jpg",
+                "available": True,
+                "rating": 4.7,
+                "preparation_time": "30 minutes"
+            },
+            {
+                "name": "Cow Milk Kheer",
+                "category": "desserts",
+                "price": 160,
+                "description": "Classic rice pudding made with cow milk, rice, and cardamom",
+                "image": "/static/images/menu/desserts and icream/Deserts/kheer.jpg",
+                "available": True,
+                "rating": 4.6,
+                "preparation_time": "25 minutes"
+            },
+            {
+                "name": "Dryfruit Barfi",
+                "category": "desserts",
+                "price": 190,
+                "description": "Rich barfi made with assorted dry fruits and khoya",
+                "image": "/static/images/menu/desserts and icream/Deserts/dryfruit-barfi.jpg",
+                "available": True,
+                "rating": 4.8,
+                "preparation_time": "20 minutes"
+            },
+            {
+                "name": "Gulab Jamun",
+                "category": "desserts",
+                "price": 90,
+                "description": "Soft milk-solid balls soaked in rose-flavored sugar syrup",
+                "image": "/static/images/menu/desserts and icream/Deserts/gulab-jamun.jpg",
+                "available": True,
+                "rating": 4.9,
                 "preparation_time": "15 minutes"
             }
         ]
         mongo.db.food_items.insert_many(sample_food_items)
-        print("Database initialized with sample food items!")
+
+    # Only seed the 4 street chaat items in the 'street-chaat' category
+    if mongo.db.food_items.count_documents({"category": "street-chaat"}) != 4:
+        mongo.db.food_items.delete_many({"category": "street-chaat"})
+        sample_chaat = [
+            {
+                "name": "Pani Puri",
+                "category": "street-chaat",
+                "price": 50,
+                "description": "Crispy puris filled with spiced potato and tangy water",
+                "image": "/static/images/menu/street-chaat/pani-puri.jpg",
+                "available": True,
+                "rating": 4.8,
+                "preparation_time": "10 minutes"
+            },
+            {
+                "name": "Samosa",
+                "category": "street-chaat",
+                "price": 40,
+                "description": "Crispy pastry filled with spicy potato mixture",
+                "image": "/static/images/menu/street-chaat/samosa.jpg",
+                "available": True,
+                "rating": 4.7,
+                "preparation_time": "8 minutes"
+            },
+            {
+                "name": "Missal Pav",
+                "category": "street-chaat",
+                "price": 150,
+                "description": "Spicy sprouted bean curry served with pav",
+                "image": "/static/images/menu/street-chaat/missal-pav.jpg",
+                "available": True,
+                "rating": 4.6,
+                "preparation_time": "12 minutes"
+            },
+            {
+                "name": "Chole Bhature",
+                "category": "street-chaat",
+                "price": 60,
+                "description": "Spicy chickpeas served with fried bread",
+                "image": "/static/images/menu/street-chaat/chole-bhature.jpg",
+                "available": True,
+                "rating": 4.9,
+                "preparation_time": "15 minutes"
+            }
+        ]
+        mongo.db.food_items.insert_many(sample_chaat)
 
 def insert_sample_gym_food_items():
     sample_gym_items = [
@@ -317,14 +433,24 @@ def home():
                          user=session['user'], 
                          food_by_category=food_by_category)
 
+# Update the desserts route to exclude ice-cream subcategory
 @app.route('/desserts')
 def desserts():
-    desserts = list(mongo.db.food_items.find({'category': 'desserts', 'available': True}))
+    desserts = list(mongo.db.food_items.find({
+        '$and': [
+            {'category': 'desserts'},
+            {'available': True},
+            {'$or': [
+                {'subcategory': {'$exists': False}},
+                {'subcategory': {'$ne': 'ice-cream'}}
+            ]}
+        ]
+    }))
     return render_template('desserts.html', desserts=desserts)
 
 @app.route('/ice-cream')
 def ice_cream():
-    ice_creams = list(mongo.db.food_items.find({'category': 'desserts', 'available': True}))
+    ice_creams = list(mongo.db.food_items.find({'category': 'desserts', 'subcategory': 'ice-cream', 'available': True}))
     return render_template('ice-cream.html', ice_creams=ice_creams)
 
 @app.route('/Dessert-Icream')

@@ -477,7 +477,7 @@ button:active {
 /* For large desktops (min-width: 993px) */
 @media screen and (min-width: 993px) {
     .menu-item-image {
-        height: 200px;
+        height: 250px;
     }
 }
 /*back-button and go to home */

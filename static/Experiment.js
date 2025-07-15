@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Initialize cart from localStorage or empty array
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    let cartIsVisible = localStorage.getItem("cartVisible") === "true";
+    // Sidebar cart state
+    let cart = [];
+    let cartIsVisible = false;
 
     // Create cart element
     const cartBox = document.createElement("div");
@@ -85,20 +85,77 @@ document.addEventListener("DOMContentLoaded", function() {
     `;
     document.head.appendChild(style);
 
-    const cartItemsArea = document.getElementById("cart-items");
-    const cartTotalElement = document.getElementById("cart-total");
+    const cartItemsArea = cartBox.querySelector("#cart-items");
+    const cartTotalElement = cartBox.querySelector("#cart-total");
 
-    // Save cart state
-    function saveCartState() {
-        localStorage.setItem("cart", JSON.stringify(cart));
-        localStorage.setItem("cartVisible", cartIsVisible);
+    // Fetch cart from backend
+    async function fetchCart() {
+        try {
+            const res = await fetch("/api/cart");
+            if (!res.ok) throw new Error("Not logged in or error fetching cart");
+            cart = await res.json();
+            updateCartDisplay();
+        } catch (err) {
+            cart = [];
+            updateCartDisplay();
+        }
+    }
+
+    // Add to cart via backend
+    async function addToCart(food_item_id, quantity = 1) {
+        try {
+            const res = await fetch("/api/cart/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ food_item_id, quantity })
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.error || "Error adding to cart");
+                return;
+            }
+            await fetchCart();
+            cartBox.style.display = "block";
+            cartIsVisible = true;
+        } catch (err) {
+            alert("Error adding to cart");
+        }
+    }
+
+    // Update cart item quantity via backend
+    async function updateCartItem(cart_item_id, quantity) {
+        try {
+            const res = await fetch("/api/cart/update", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cart_item_id, quantity })
+            });
+            await fetchCart();
+        } catch (err) {
+            alert("Error updating cart");
+        }
+    }
+
+    // Remove cart item via backend
+    async function removeCartItem(cart_item_id) {
+        try {
+            await fetch(`/api/cart/remove/${cart_item_id}`, { method: "DELETE" });
+            await fetchCart();
+        } catch (err) {
+            alert("Error removing item");
+        }
     }
 
     // Update cart display
     function updateCartDisplay() {
         cartItemsArea.innerHTML = "";
         let total = 0;
-
+        if (!cart || cart.length === 0) {
+            cartBox.style.display = "none";
+            cartIsVisible = false;
+            cartTotalElement.textContent = 0;
+            return;
+        }
         cart.forEach((item, index) => {
             const itemElement = document.createElement("div");
             itemElement.className = "cart-item";
@@ -114,91 +171,58 @@ document.addEventListener("DOMContentLoaded", function() {
                     <button class="btn btn-sm btn-danger remove">×</button>
                 </div>
             `;
-            
             itemElement.querySelector(".plus").addEventListener("click", () => {
-                cart[index].quantity++;
-                saveCartState();
-                updateCartDisplay();
+                updateCartItem(item.cart_id, item.quantity + 1);
             });
-
             itemElement.querySelector(".minus").addEventListener("click", () => {
-                if (cart[index].quantity > 1) {
-                    cart[index].quantity--;
-                    saveCartState();
-                    updateCartDisplay();
+                if (item.quantity > 1) {
+                    updateCartItem(item.cart_id, item.quantity - 1);
+                } else {
+                    removeCartItem(item.cart_id);
                 }
             });
-
             itemElement.querySelector(".remove").addEventListener("click", () => {
-                cart.splice(index, 1);
-                saveCartState();
-                updateCartDisplay();
-                if (cart.length === 0) {
-                    cartBox.style.display = "none";
-                    cartIsVisible = false;
-                    saveCartState();
-                }
+                removeCartItem(item.cart_id);
             });
-
             cartItemsArea.appendChild(itemElement);
             total += item.price * item.quantity;
         });
-
         cartTotalElement.textContent = total;
+        cartBox.style.display = "block";
+        cartIsVisible = true;
     }
 
-    // Add to cart functionality
+    // Add to cart functionality (attach to add-to-cart buttons)
     document.querySelectorAll(".add-to-cart-icon").forEach(button => {
         button.addEventListener("click", function(e) {
             e.preventDefault();
             const card = this.closest(".menu-item-card");
             if (!card) return;
-
-            const itemName = card.querySelector(".menu-card-title").textContent.trim();
-            const itemPriceText = card.querySelector(".Dish-Price").textContent.trim();
-            const itemPrice = parseInt(itemPriceText.replace(/\D/g, ""));
-
-            const existingItem = cart.find(item => item.name === itemName);
-            
-            if (existingItem) {
-                alert(`${itemName} is already in your cart!`);
+            // Get food_item_id from data attribute
+            const food_item_id = card.getAttribute("data-food-item-id");
+            if (!food_item_id) {
+                alert("Food item ID not found!");
                 return;
             }
-
-            cart.push({
-                name: itemName,
-                price: itemPrice,
-                quantity: 1
-            });
-
-            cartBox.style.display = "block";
-            cartIsVisible = true;
-            saveCartState();
-            updateCartDisplay();
+            addToCart(food_item_id, 1);
         });
     });
 
     // Close cart button
-    document.getElementById("close-cart").addEventListener("click", () => {
+    cartBox.querySelector("#close-cart").addEventListener("click", () => {
         cartBox.style.display = "none";
         cartIsVisible = false;
-        saveCartState();
     });
 
-    // Buy now button
-    document.getElementById("buy-now").addEventListener("click", () => {
-        if (cart.length === 0) {
+    // Buy now button (redirect to /cart page)
+    cartBox.querySelector("#buy-now").addEventListener("click", () => {
+        if (!cart || cart.length === 0) {
             alert("Your cart is empty!");
             return;
         }
-        alert(`Order placed! Total: Rs. ${cartTotalElement.textContent}`);
-        cart = [];
-        saveCartState();
-        updateCartDisplay();
-        cartBox.style.display = "none";
-        cartIsVisible = false;
+        window.location.href = "/cart";
     });
 
-    // Initialize cart display
-    if (cartIsVisible) updateCartDisplay();
+    // Initial fetch
+    fetchCart();
 });

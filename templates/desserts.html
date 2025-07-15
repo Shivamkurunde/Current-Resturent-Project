@@ -11,96 +11,64 @@
         <div class="Desserts-Container">
             <div class="container">
                 <div class="row">
+                    {% for item in desserts %}
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/desserts and icream/Deserts/dryfruit-barfi.jpg" class="menu-item-image w-100" alt="Dryfruit Barfi" />
-                            <h1 class="menu-card-title">Dryfruit Barfi</h1>
-                            <p class="Dish-Price">Rs.80 </p>
-                            <div class="rating">
-                                <span class="stars">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star-half-alt text-warning"></i>
-                                    <i class="far fa-star text-warning"></i>
-                                </span>
-                                <span class="rating-text">(3.5)</span>
-                            </div>
+                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
+                            <h1 class="menu-card-title">{{ item.name }}</h1>
+                            <p class="Dish-Price">Rs.{{ item.price }}</p>
                             <a href="" class="menu-item-link">Order Now</a>
-                            <button class="btn add-to-cart-icon">
-                                <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto"
+                                        data-food-item-id="{{ item._id|string }}"
+                                        data-food-name="{{ item.name }}"
+                                        data-food-price="{{ item.price }}"
+                                        data-food-image="{{ item.image }}">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/desserts and icream/Deserts/kheer.jpg" class="menu-item-image w-100" alt="Kheer" />
-                            <h1 class="menu-card-title">Kheer</h1>
-                            <p class="Dish-Price">Rs.60 </p>
-                            <div class="rating">
-                                <span class="stars">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="far fa-star text-warning"></i>
-                                    <i class="far fa-star text-warning"></i>
-                                </span>
-                                <span class="rating-text">(3.0)</span>
-                            </div>
-                            <a href="" class="menu-item-link">Order Now</a>
-                            <button class="btn add-to-cart-icon">
-                                <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/desserts and icream/Deserts/gajar-halwa.jpg" class="menu-item-image w-100" alt="Gajar Halwa" />
-                            <h1 class="menu-card-title">Gajar Halwa</h1>
-                            <p class="Dish-Price">Rs.70 </p>
-                            <div class="rating">
-                                <span class="stars">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="far fa-star text-warning"></i>
-                                </span>
-                                <span class="rating-text">(4.0)</span>
-                            </div>
-                            <a href="" class="menu-item-link">Order Now</a>
-                            <button class="btn add-to-cart-icon">
-                                <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                        <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/desserts and icream/Deserts/gulab-jamun.jpg" class="menu-item-image w-100" alt="Gulab Jamun" />
-                            <h1 class="menu-card-title">Gulab Jamun</h1>
-                            <p class="Dish-Price">Rs.50 </p>
-                            <div class="rating">
-                                <span class="stars">
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star text-warning"></i>
-                                    <i class="fas fa-star-half-alt text-warning"></i>
-                                    <i class="far fa-star text-warning"></i>
-                                </span>
-                                <span class="rating-text">(3.5)</span>
-                            </div>
-                            <a href="" class="menu-item-link">Order Now</a>
-                            <button class="btn add-to-cart-icon">
-                                <i class="fas fa-shopping-bag custom_icon"></i>
-                            </button>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
             <div class="d-flex justify-content-center align-items-end mb-3">
-                <a href="/Dessert-Icream"> <button class="back-button btn btn-primary">Back</button></a>
+                <a href="/"> <button class="back-button btn btn-primary">Back</button></a>
             </div>
         </div>
     </div>
+    <script>
+document.addEventListener("DOMContentLoaded", function() {
+    var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
+    addToCartButtons.forEach(function(button) {
+        button.addEventListener("click", function(event) {
+            event.preventDefault();
+            const foodId = this.getAttribute('data-food-item-id');
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    food_item_id: foodId,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Added to cart!");
+                } else {
+                    alert("Error adding item to cart: " + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error adding item to cart. Please try again.");
+            });
+        });
+    });
+});
+</script>
 </body>
 </html>
