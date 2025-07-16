@@ -217,7 +217,7 @@ def insert_sample_gym_food_items():
             "subcategory": "shakes",
             "price": 320,
             "description": "Creamy avocado smoothie with honey and milk",
-            "image": "/static/images/menu/gym/avocado-smoothie.jpg",
+            "image": "/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg",
             "available": True,
             "rating": 4.8,
             "preparation_time": "5 minutes"
@@ -228,7 +228,7 @@ def insert_sample_gym_food_items():
             "subcategory": "shakes",
             "price": 70,
             "description": "Fresh almond milk, lightly sweetened",
-            "image": "/static/images/menu/gym/almond-milk.jpg",
+            "image": "/static/images/menu/gym/shakes and smoothies/almond-milk.jpg",
             "available": True,
             "rating": 4.6,
             "preparation_time": "3 minutes"
@@ -239,7 +239,7 @@ def insert_sample_gym_food_items():
             "subcategory": "shakes",
             "price": 110,
             "description": "Banana shake with peanut butter and milk",
-            "image": "/static/images/menu/gym/banana-peanut-shake.jpg",
+            "image": "/static/images/menu/gym/shakes and smoothies/banana-shake.jpg",
             "available": True,
             "rating": 4.7,
             "preparation_time": "4 minutes"
@@ -417,21 +417,16 @@ def logout():
 
 @app.route('/')
 def home():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    
-    # Get food items by category for the home page
+    # Always show home page, even if not logged in
+    # If user is logged in, pass user info; else, pass None
+    user = session.get('user')
     categories = ['veg', 'desserts', 'gym', 'street-chaat']
     food_by_category = {}
-    
     for category in categories:
         food_by_category[category] = list(mongo.db.food_items.find(
             {'category': category, 'available': True}
         ).limit(4))
-    
-    return render_template('home.html', 
-                         user=session['user'], 
-                         food_by_category=food_by_category)
+    return render_template('home.html', user=user, food_by_category=food_by_category)
 
 # Update the desserts route to exclude ice-cream subcategory
 @app.route('/desserts')
@@ -465,18 +460,40 @@ def gym_food():
 
 @app.route('/gym-protein')
 def gym_protein():
-    proteins = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'protein', 'available': True}))
-    return render_template('gym-protein.html', proteins=proteins)
+    paneer = mongo.db.food_items.find_one({'name': 'Paneer Tikka'})
+    palak = mongo.db.food_items.find_one({'name': 'Palak Paneer'})
+    rajma = mongo.db.food_items.find_one({'name': 'Rajma Chawal'})
+    return render_template(
+        'gym-protein.html',
+        paneer_id=str(paneer['_id']) if paneer else '',
+        palak_id=str(palak['_id']) if palak else '',
+        rajma_id=str(rajma['_id']) if rajma else ''
+    )
 
 @app.route('/gym-detox')
 def gym_detox():
-    detox_items = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'detox', 'available': True}))
-    return render_template('gym-detox.html', detox_items=detox_items)
+    mint = mongo.db.food_items.find_one({'name': 'Mint Cucumber Water'})
+    carrot = mongo.db.food_items.find_one({'name': 'Carrot Beetroot Detox Juice'})
+    coconut = mongo.db.food_items.find_one({'name': 'Coconut Water with Chia Seeds'})
+    return render_template(
+        'gym-detox.html',
+        mint_id=str(mint['_id']) if mint else '',
+        carrot_id=str(carrot['_id']) if carrot else '',
+        coconut_id=str(coconut['_id']) if coconut else ''
+    )
 
 @app.route('/gym-shakes')
 def gym_shakes():
-    shakes = list(mongo.db.food_items.find({'category': 'gym', 'subcategory': 'shakes', 'available': True}))
-    return render_template('gym-shakes.html', shakes=shakes)
+    # Fetch the three shakes by name
+    avocado = mongo.db.food_items.find_one({'name': 'Avocado Smoothie'})
+    almond = mongo.db.food_items.find_one({'name': 'Almond Milk'})
+    banana = mongo.db.food_items.find_one({'name': 'Banana Peanut Butter Shake'})
+    return render_template(
+        'gym-shakes.html',
+        avocado_id=str(avocado['_id']) if avocado else '',
+        almond_id=str(almond['_id']) if almond else '',
+        banana_id=str(banana['_id']) if banana else ''
+    )
 
 @app.route('/street-chaat')
 def street_chaat():

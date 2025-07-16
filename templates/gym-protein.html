@@ -15,12 +15,12 @@
         <div class="Gym-Protein-Container">
             <div class="container">
                 <div class="row">
-                    {% for item in proteins %}
+                    <!-- Paneer Tikka Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
-                            <h1 class="menu-card-title">{{ item.name }}</h1>
-                            <p class="Dish-Price">Rs.{{ item.price }}</p>
+                            <img src="/static/images/menu/gym/paneer-tikka.jpg" class="menu-item-image w-100" alt="Paneer Tikka" />
+                            <h1 class="menu-card-title">Paneer Tikka</h1>
+                            <p class="Dish-Price">Rs.260</p>
                             <div class="rating">
                                 <span class="stars">
                                     <i class="fas fa-star text-warning"></i>
@@ -29,21 +29,64 @@
                                     <i class="fas fa-star-half-alt text-warning"></i>
                                     <i class="far fa-star text-warning"></i>
                                 </span>
-                                <span class="rating-text">({{ item.rating or '3.5' }})</span>
+                                <span class="rating-text">(4.9)</span>
                             </div>
-                            <a href="" class="menu-item-link">Order Now</a>
+                            <a href="#" class="menu-item-link">Order Now</a>
                             <div class="icon-conatiner">
-                                <button class="btn add-to-cart-icon mr-auto"
-                                        data-food-item-id="{{ item._id|string }}"
-                                        data-food-name="{{ item.name }}"
-                                        data-food-price="{{ item.price }}"
-                                        data-food-image="{{ item.image }}">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ paneer_id }}" data-food-name="Paneer Tikka">
                                     <i class="fas fa-shopping-bag custom_icon"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+                    <!-- Palak Paneer Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="/static/images/menu/gym/palak-paneer.jpg" class="menu-item-image w-100" alt="Palak Paneer" />
+                            <h1 class="menu-card-title">Palak Paneer</h1>
+                            <p class="Dish-Price">Rs.280</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.8)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ palak_id }}" data-food-name="Palak Paneer">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Rajma Chawal Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="/static/images/menu/gym/rajma-chawal.jpg" class="menu-item-image w-100" alt="Rajma Chawal" />
+                            <h1 class="menu-card-title">Rajma Chawal</h1>
+                            <p class="Dish-Price">Rs.100</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.7)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ rajma_id }}" data-food-name="Rajma Chawal">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -15,12 +15,12 @@
         <div class="Gym-Shakes-Container">
             <div class="container">
                 <div class="row">
-                    {% for item in shakes %}
+                    <!-- Avocado Smoothie Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="{{ item.image }}" class="menu-item-image w-100" alt="{{ item.name }}" />
-                            <h1 class="menu-card-title">{{ item.name }}</h1>
-                            <p class="Dish-Price">Rs.{{ item.price }}</p>
+                            <img src="/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg" class="menu-item-image w-100" alt="Avocado Smoothie" />
+                            <h1 class="menu-card-title">Avocado Smoothie</h1>
+                            <p class="Dish-Price">Rs.320</p>
                             <div class="rating">
                                 <span class="stars">
                                     <i class="fas fa-star text-warning"></i>
@@ -29,21 +29,64 @@
                                     <i class="fas fa-star-half-alt text-warning"></i>
                                     <i class="far fa-star text-warning"></i>
                                 </span>
-                                <span class="rating-text">({{ item.rating or '3.5' }})</span>
+                                <span class="rating-text">(4.8)</span>
                             </div>
-                            <a href="" class="menu-item-link">Order Now</a>
+                            <a href="#" class="menu-item-link">Order Now</a>
                             <div class="icon-conatiner">
-                                <button class="btn add-to-cart-icon mr-auto"
-                                        data-food-item-id="{{ item._id|string }}"
-                                        data-food-name="{{ item.name }}"
-                                        data-food-price="{{ item.price }}"
-                                        data-food-image="{{ item.image }}">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ avocado_id }}" data-food-name="Avocado Smoothie">
                                     <i class="fas fa-shopping-bag custom_icon"></i>
                                 </button>
                             </div>
                         </div>
                     </div>
-                    {% endfor %}
+                    <!-- Almond Milk Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="/static/images/menu/gym/shakes and smoothies/almond-milk.jpg" class="menu-item-image w-100" alt="Almond Milk" />
+                            <h1 class="menu-card-title">Almond Milk</h1>
+                            <p class="Dish-Price">Rs.70</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.6)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ almond_id }}" data-food-name="Almond Milk">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Banana Peanut Butter Shake Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="/static/images/menu/gym/shakes and smoothies/banana-shake.jpg" class="menu-item-image w-100" alt="Banana Peanut Butter Shake" />
+                            <h1 class="menu-card-title">Banana Peanut Butter Shake</h1>
+                            <p class="Dish-Price">Rs.110</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.7)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ banana_id }}" data-food-name="Banana Peanut Butter Shake">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
