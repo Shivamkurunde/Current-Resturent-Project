@@ -48,38 +48,5 @@
             </div>
         </div>
     </div>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
-    addToCartButtons.forEach(function(button) {
-        button.addEventListener("click", function(event) {
-            event.preventDefault();
-            const foodId = this.getAttribute('data-food-item-id');
-            fetch('/api/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    food_item_id: foodId,
-                    quantity: 1
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert("Added to cart!");
-                } else {
-                    alert("Error adding item to cart: " + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert("Error adding item to cart. Please try again.");
-            });
-        });
-    });
-});
-</script>
 </body>
 </html>

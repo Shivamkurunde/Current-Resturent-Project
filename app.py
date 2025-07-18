@@ -250,7 +250,7 @@ def insert_sample_gym_food_items():
             "subcategory": "protein",
             "price": 260,
             "description": "Grilled paneer with spices",
-            "image": "/static/images/menu/gym/paneer-tikka.jpg",
+            "image": "/static/images/menu/gym/High Protein/Paneer-Tikha.jpg",
             "available": True,
             "rating": 4.9,
             "preparation_time": "15 minutes"
@@ -261,7 +261,7 @@ def insert_sample_gym_food_items():
             "subcategory": "protein",
             "price": 280,
             "description": "Spinach curry with paneer cubes",
-            "image": "/static/images/menu/gym/palak-paneer.jpg",
+            "image": "/static/images/menu/gym/High Protein/Palak-Paneer.jpg",
             "available": True,
             "rating": 4.8,
             "preparation_time": "20 minutes"
@@ -272,7 +272,7 @@ def insert_sample_gym_food_items():
             "subcategory": "protein",
             "price": 100,
             "description": "Kidney beans curry with rice",
-            "image": "/static/images/menu/gym/rajma-chawal.jpg",
+            "image": "/static/images/menu/gym/High Protein/Rajma-Chawal.jpg",
             "available": True,
             "rating": 4.7,
             "preparation_time": "25 minutes"
@@ -283,7 +283,7 @@ def insert_sample_gym_food_items():
             "subcategory": "protein",
             "price": 290,
             "description": "Multigrain toast topped with avocado",
-            "image": "/static/images/menu/gym/avocado-toast.jpg",
+            "image": "/static/images/menu/gym/High Protein/avocado-toast.jpg",
             "available": True,
             "rating": 4.6,
             "preparation_time": "7 minutes"
@@ -294,7 +294,7 @@ def insert_sample_gym_food_items():
             "subcategory": "detox",
             "price": 50,
             "description": "Refreshing water with mint and cucumber",
-            "image": "/static/images/menu/gym/mint-cucumber-water.jpg",
+            "image": "/static/images/menu/gym/Detox drinks/Mint-cucumber.jpg",
             "available": True,
             "rating": 4.5,
             "preparation_time": "2 minutes"
@@ -305,7 +305,7 @@ def insert_sample_gym_food_items():
             "subcategory": "detox",
             "price": 50,
             "description": "Detox juice with carrot and beetroot",
-            "image": "/static/images/menu/gym/carrot-beetroot-juice.jpg",
+            "image": "/static/images/menu/gym/Detox drinks/Carrot-Beetroot-juice.jpg",
             "available": True,
             "rating": 4.6,
             "preparation_time": "3 minutes"
@@ -316,7 +316,7 @@ def insert_sample_gym_food_items():
             "subcategory": "detox",
             "price": 120,
             "description": "Coconut water with chia seeds",
-            "image": "/static/images/menu/gym/coconut-chia.jpg",
+            "image": "/static/images/menu/gym/Detox drinks/cocunat-water-chia-seeds-drink.jpg",
             "available": True,
             "rating": 4.7,
             "preparation_time": "2 minutes"
@@ -327,7 +327,7 @@ def insert_sample_gym_food_items():
             "subcategory": "detox",
             "price": 60,
             "description": "Aloe vera juice for detox",
-            "image": "/static/images/menu/gym/aloe-vera-juice.jpg",
+            "image": "/static/images/menu/gym/Detox drinks/Aleovera-juice.jpg",
             "available": True,
             "rating": 4.6,
             "preparation_time": "2 minutes"
@@ -463,11 +463,17 @@ def gym_protein():
     paneer = mongo.db.food_items.find_one({'name': 'Paneer Tikka'})
     palak = mongo.db.food_items.find_one({'name': 'Palak Paneer'})
     rajma = mongo.db.food_items.find_one({'name': 'Rajma Chawal'})
+    avocado = mongo.db.food_items.find_one({'name': 'Multigrain Toast with Avocado'})
     return render_template(
         'gym-protein.html',
         paneer_id=str(paneer['_id']) if paneer else '',
         palak_id=str(palak['_id']) if palak else '',
-        rajma_id=str(rajma['_id']) if rajma else ''
+        rajma_id=str(rajma['_id']) if rajma else '',
+        avocado_id=str(avocado['_id']) if avocado else '',
+        paneer_image='/static/images/menu/gym/High Protein/Paneer-Tikha.jpg',
+        palak_image='/static/images/menu/gym/High Protein/Palak-Paneer.jpg',
+        rajma_image='/static/images/menu/gym/High Protein/Rajma-Chawal.jpg',
+        avocado_image='/static/images/menu/gym/High Protein/avocado-toast.jpg'
     )
 
 @app.route('/gym-detox')
@@ -475,11 +481,17 @@ def gym_detox():
     mint = mongo.db.food_items.find_one({'name': 'Mint Cucumber Water'})
     carrot = mongo.db.food_items.find_one({'name': 'Carrot Beetroot Detox Juice'})
     coconut = mongo.db.food_items.find_one({'name': 'Coconut Water with Chia Seeds'})
+    aloe = mongo.db.food_items.find_one({'name': 'Aloe Vera Juice'})
     return render_template(
         'gym-detox.html',
         mint_id=str(mint['_id']) if mint else '',
         carrot_id=str(carrot['_id']) if carrot else '',
-        coconut_id=str(coconut['_id']) if coconut else ''
+        coconut_id=str(coconut['_id']) if coconut else '',
+        aloe_id=str(aloe['_id']) if aloe else '',
+        mint_image='/static/images/menu/gym/Detox drinks/Mint-cucumber.jpg',
+        carrot_image='/static/images/menu/gym/Detox drinks/Carrot-Beetroot-juice.jpg',
+        coconut_image='/static/images/menu/gym/Detox drinks/cocunat-water-chia-seeds-drink.jpg',
+        aloe_image='/static/images/menu/gym/Detox drinks/Aleovera-juice.jpg'
     )
 
 @app.route('/gym-shakes')
@@ -640,13 +652,16 @@ def create_order():
     # Calculate total and prepare order items
     total_amount = 0
     order_items = []
-    
+
     for cart_item in cart_items:
-        food_item = mongo.db.food_items.find_one({'_id': cart_item['food_item_id']})
+        try:
+            food_item_id_obj = ObjectId(cart_item['food_item_id'])
+        except Exception:
+            continue  # skip if invalid
+        food_item = mongo.db.food_items.find_one({'_id': food_item_id_obj})
         if food_item:
             item_total = food_item['price'] * cart_item['quantity']
             total_amount += item_total
-            
             order_items.append({
                 'food_item_id': cart_item['food_item_id'],
                 'food_name': food_item['name'],
@@ -732,6 +747,28 @@ def admin_food_items():
     
     food_items = list(mongo.db.food_items.find())
     return render_template('admin_food_items.html', food_items=food_items)
+
+@app.route('/fix-gym-images')
+def fix_gym_images():
+    fixes = [
+        ("Avocado Smoothie", "/static/images/menu/gym/shakes and smoothies/avacado-smoothie.jpg"),
+        ("Banana Peanut Butter Shake", "/static/images/menu/gym/shakes and smoothies/banana-shake.jpg"),
+        ("Almond Milk", "/static/images/menu/gym/shakes and smoothies/almond-milk.jpg"),
+        ("Paneer Tikka", "/static/images/menu/gym/High Protein/Paneer-Tikha.jpg"),
+        ("Palak Paneer", "/static/images/menu/gym/High Protein/Palak-Paneer.jpg"),
+        ("Rajma Chawal", "/static/images/menu/gym/High Protein/Rajma-Chawal.jpg"),
+        ("Multigrain Toast with Avocado", "/static/images/menu/gym/High Protein/avocado-toast.jpg"),
+        ("Mint Cucumber Water", "/static/images/menu/gym/Detox drinks/Mint-cucumber.jpg"),
+        ("Carrot Beetroot Detox Juice", "/static/images/menu/gym/Detox drinks/Carrot-Beetroot-juice.jpg"),
+        ("Coconut Water with Chia Seeds", "/static/images/menu/gym/Detox drinks/cocunat-water-chia-seeds-drink.jpg"),
+        ("Aloe Vera Juice", "/static/images/menu/gym/Detox drinks/Aleovera-juice.jpg"),
+    ]
+    updated = 0
+    for name, path in fixes:
+        result = mongo.db.food_items.update_one({"name": name}, {"$set": {"image": path}})
+        if result.modified_count > 0:
+            updated += 1
+    return f"Updated {updated} gym item image paths. You can now remove this route."
 
 if __name__ == '__main__':
     # Initialize database with sample data

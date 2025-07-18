@@ -18,7 +18,7 @@
                     <!-- Mint Cucumber Water Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/mint-cucumber-water.jpg" class="menu-item-image w-100" alt="Mint Cucumber Water" />
+                            <img src="{{ mint_image }}" class="menu-item-image w-100" alt="Mint Cucumber Water" />
                             <h1 class="menu-card-title">Mint Cucumber Water</h1>
                             <p class="Dish-Price">Rs.50</p>
                             <div class="rating">
@@ -42,7 +42,7 @@
                     <!-- Carrot Beetroot Detox Juice Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/carrot-beetroot-juice.jpg" class="menu-item-image w-100" alt="Carrot Beetroot Detox Juice" />
+                            <img src="{{ carrot_image }}" class="menu-item-image w-100" alt="Carrot Beetroot Detox Juice" />
                             <h1 class="menu-card-title">Carrot Beetroot Detox Juice</h1>
                             <p class="Dish-Price">Rs.50</p>
                             <div class="rating">
@@ -66,7 +66,7 @@
                     <!-- Coconut Water with Chia Seeds Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/coconut-chia.jpg" class="menu-item-image w-100" alt="Coconut Water with Chia Seeds" />
+                            <img src="{{ coconut_image }}" class="menu-item-image w-100" alt="Coconut Water with Chia Seeds" />
                             <h1 class="menu-card-title">Coconut Water with Chia Seeds</h1>
                             <p class="Dish-Price">Rs.120</p>
                             <div class="rating">
@@ -87,6 +87,30 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Aloe Vera Juice Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="{{ aloe_image }}" class="menu-item-image w-100" alt="Aloe Vera Juice" />
+                            <h1 class="menu-card-title">Aloe Vera Juice</h1>
+                            <p class="Dish-Price">Rs.60</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.6)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ aloe_id }}" data-food-name="Aloe Vera Juice">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,49 +121,6 @@
         </div>
     </div>
 
-    <script>
-        // Enhanced cart functionality with database integration
-        document.addEventListener("DOMContentLoaded", function() {
-            var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
-
-            addToCartButtons.forEach(function(button) {
-                button.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    
-                    const foodId = this.getAttribute('data-food-item-id');
-                    const foodName = this.getAttribute('data-food-name');
-                    const foodPrice = parseInt(this.getAttribute('data-food-price'));
-
-                    // Add to cart via API
-                    fetch('/api/cart/add', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            food_item_id: foodId,
-                            quantity: 1
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(foodName + " added to cart!");
-                            // Update cart display if cart is visible
-                            if (typeof updateCartDisplay === 'function') {
-                                updateCartDisplay();
-                            }
-                        } else {
-                            alert("Error adding item to cart: " + data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Error adding item to cart. Please try again.");
-                    });
-                });
-            });
-        });
-    </script>
+    <!-- Removed duplicate inline add-to-cart script to prevent double alerts -->
 </body>
 </html>

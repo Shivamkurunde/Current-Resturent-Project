@@ -18,7 +18,7 @@
                     <!-- Paneer Tikka Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/paneer-tikka.jpg" class="menu-item-image w-100" alt="Paneer Tikka" />
+                            <img src="{{ paneer_image }}" class="menu-item-image w-100" alt="Paneer Tikka" />
                             <h1 class="menu-card-title">Paneer Tikka</h1>
                             <p class="Dish-Price">Rs.260</p>
                             <div class="rating">
@@ -42,7 +42,7 @@
                     <!-- Palak Paneer Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/palak-paneer.jpg" class="menu-item-image w-100" alt="Palak Paneer" />
+                            <img src="{{ palak_image }}" class="menu-item-image w-100" alt="Palak Paneer" />
                             <h1 class="menu-card-title">Palak Paneer</h1>
                             <p class="Dish-Price">Rs.280</p>
                             <div class="rating">
@@ -66,7 +66,7 @@
                     <!-- Rajma Chawal Card -->
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
-                            <img src="/static/images/menu/gym/rajma-chawal.jpg" class="menu-item-image w-100" alt="Rajma Chawal" />
+                            <img src="{{ rajma_image }}" class="menu-item-image w-100" alt="Rajma Chawal" />
                             <h1 class="menu-card-title">Rajma Chawal</h1>
                             <p class="Dish-Price">Rs.100</p>
                             <div class="rating">
@@ -87,6 +87,30 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Avocado Toast Card -->
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="shadow menu-item-card p-3 mb-3">
+                            <img src="{{ avocado_image }}" class="menu-item-image w-100" alt="Avocado Toast" />
+                            <h1 class="menu-card-title">Avocado Toast</h1>
+                            <p class="Dish-Price">Rs.290</p>
+                            <div class="rating">
+                                <span class="stars">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </span>
+                                <span class="rating-text">(4.6)</span>
+                            </div>
+                            <a href="#" class="menu-item-link">Order Now</a>
+                            <div class="icon-conatiner">
+                                <button class="btn add-to-cart-icon mr-auto" data-food-item-id="{{ avocado_id }}" data-food-name="Avocado Toast">
+                                    <i class="fas fa-shopping-bag custom_icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,49 +121,6 @@
         </div>
     </div>
 
-    <script>
-        // Enhanced cart functionality with database integration
-        document.addEventListener("DOMContentLoaded", function() {
-            var addToCartButtons = document.querySelectorAll(".add-to-cart-icon");
-
-            addToCartButtons.forEach(function(button) {
-                button.addEventListener("click", function(event) {
-                    event.preventDefault();
-                    
-                    const foodId = this.getAttribute('data-food-item-id');
-                    const foodName = this.getAttribute('data-food-name');
-                    const foodPrice = parseInt(this.getAttribute('data-food-price'));
-
-                    // Add to cart via API
-                    fetch('/api/cart/add', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            food_item_id: foodId,
-                            quantity: 1
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            alert(foodName + " added to cart!");
-                            // Update cart display if cart is visible
-                            if (typeof updateCartDisplay === 'function') {
-                                updateCartDisplay();
-                            }
-                        } else {
-                            alert("Error adding item to cart: " + data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert("Error adding item to cart. Please try again.");
-                    });
-                });
-            });
-        });
-    </script>
+    <!-- Removed duplicate inline add-to-cart script to prevent double alerts -->
 </body>
 </html>
