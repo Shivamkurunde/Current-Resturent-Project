@@ -1,0 +1,237 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                        📋 USE CASE DIAGRAM 📋                                ║
+║                     Restaurant Management System                             ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                            USE CASE DIAGRAM
+═══════════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│                                                                             │
+│    👤                          SYSTEM BOUNDARY                              │
+│   USER                  ┌────────────────────────────────┐                 │
+│    │                    │                                │                 │
+│    │                    │   Restaurant Management        │                 │
+│    │                    │         System                 │                 │
+│    │                    │                                │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Register Account)            │                 │
+│    │                    │         ○                      │                 │
+│    │                    │         │                      │                 │
+│    │                    │         ├──includes──▶ (Verify OTP)              │
+│    │                    │         │                 ○    │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Login)                       │                 │
+│    │                    │     ○                          │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Browse Menu)                 │                 │
+│    │                    │     ○                          │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Add to Cart)                 │                 │
+│    │                    │     ○                          │                 │
+│    │                    │     │                          │                 │
+│    │                    │     ├──requires──▶ (Login)     │                 │
+│    │                    │                       ○        │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (View Cart)                   │                 │
+│    │                    │     ○                          │                 │
+│    │                    │     │                          │                 │
+│    │                    │     ├──extends──▶ (Update Quantity)              │
+│    │                    │     │                ○         │                 │
+│    │                    │     │                          │                 │
+│    │                    │     └──extends──▶ (Remove Item)│                 │
+│    │                    │                        ○       │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Checkout)                    │                 │
+│    │                    │     ○                          │                 │
+│    │                    │     │                          │                 │
+│    │                    │     ├──includes──▶ (Enter Delivery Details)      │
+│    │                    │     │                 ○        │                 │
+│    │                    │     │                          │                 │
+│    │                    │     └──includes──▶ (Place Order)                 │
+│    │                    │                        ○       │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (View Order History)          │                 │
+│    │                    │     ○                          │                 │
+│    │                    │     │                          │                 │
+│    │                    │     └──extends──▶ (View Order Details)           │
+│    │                    │                        ○       │                 │
+│    │                    │                                │                 │
+│    ├───────────────────▶│  (Cancel Order)                │                 │
+│    │                    │     ○                          │                 │
+│    │                    │                                │                 │
+│    └───────────────────▶│  (Logout)                      │                 │
+│                         │     ○                          │                 │
+│                         │                                │                 │
+│                         └────────────────────────────────┘                 │
+│                                                                             │
+│                                                                             │
+│                         ┌────────────────────────────────┐                 │
+│                         │                                │                 │
+│                         │   Database System              │                 │
+│                         │                                │                 │
+│                         │  (Store User Data)             │                 │
+│                         │         ○                      │                 │
+│                         │                                │                 │
+│                         │  (Store Cart Data)             │                 │
+│                         │         ○                      │                 │
+│                         │                                │                 │
+│                         │  (Store Order Data)            │                 │
+│                         │         ○                      │                 │
+│                         │                                │                 │
+│                         └────────────────────────────────┘                 │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        USE CASE DESCRIPTIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. REGISTER ACCOUNT
+   Actor: User (Guest)
+   Description: User creates a new account
+   Precondition: User is not logged in
+   Postcondition: User account created, OTP sent
+   Includes: Verify OTP
+
+2. VERIFY OTP
+   Actor: User
+   Description: User verifies email with OTP code
+   Precondition: Registration completed
+   Postcondition: Account activated
+
+3. LOGIN
+   Actor: User
+   Description: User logs into the system
+   Precondition: User has registered account
+   Postcondition: User session created
+
+4. BROWSE MENU
+   Actor: User
+   Description: User views available food items
+   Precondition: None
+   Postcondition: Menu items displayed
+
+5. ADD TO CART
+   Actor: User (Logged in)
+   Description: User adds items to shopping cart
+   Precondition: User is logged in
+   Postcondition: Item added to cart
+   Requires: Login
+
+6. VIEW CART
+   Actor: User (Logged in)
+   Description: User views cart contents
+   Precondition: User is logged in
+   Postcondition: Cart items displayed
+   Extends: Update Quantity, Remove Item
+
+7. UPDATE QUANTITY
+   Actor: User (Logged in)
+   Description: User changes item quantity in cart
+   Precondition: Items in cart
+   Postcondition: Quantity updated
+
+8. REMOVE ITEM
+   Actor: User (Logged in)
+   Description: User removes item from cart
+   Precondition: Items in cart
+   Postcondition: Item removed
+
+9. CHECKOUT
+   Actor: User (Logged in)
+   Description: User proceeds to order placement
+   Precondition: Items in cart
+   Postcondition: Order created
+   Includes: Enter Delivery Details, Place Order
+
+10. ENTER DELIVERY DETAILS
+    Actor: User (Logged in)
+    Description: User provides address and phone
+    Precondition: Checkout initiated
+    Postcondition: Details saved
+
+11. PLACE ORDER
+    Actor: User (Logged in)
+    Description: User confirms and places order
+    Precondition: Delivery details entered
+    Postcondition: Order created, cart cleared
+
+12. VIEW ORDER HISTORY
+    Actor: User (Logged in)
+    Description: User views past orders
+    Precondition: User is logged in
+    Postcondition: Order list displayed
+    Extends: View Order Details
+
+13. VIEW ORDER DETAILS
+    Actor: User (Logged in)
+    Description: User views specific order information
+    Precondition: Order exists
+    Postcondition: Order details displayed
+
+14. CANCEL ORDER
+    Actor: User (Logged in)
+    Description: User cancels pending order
+    Precondition: Order status is 'Pending'
+    Postcondition: Order status changed to 'Cancelled'
+
+15. LOGOUT
+    Actor: User (Logged in)
+    Description: User logs out of system
+    Precondition: User is logged in
+    Postcondition: Session destroyed
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        RELATIONSHIPS
+═══════════════════════════════════════════════════════════════════════════════
+
+INCLUDES:
+  - Register Account ──includes──> Verify OTP
+  - Checkout ──includes──> Enter Delivery Details
+  - Checkout ──includes──> Place Order
+
+EXTENDS:
+  - View Cart ──extends──> Update Quantity
+  - View Cart ──extends──> Remove Item
+  - View Order History ──extends──> View Order Details
+
+REQUIRES:
+  - Add to Cart ──requires──> Login
+  - View Cart ──requires──> Login
+  - Checkout ──requires──> Login
+  - View Order History ──requires──> Login
+
+
+═══════════════════════════════════════════════════════════════════════════════
+                        ACTORS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. USER (Guest)
+   - Can register
+   - Can browse menu
+   - Can login
+
+2. USER (Logged In)
+   - All guest capabilities
+   - Can add to cart
+   - Can view cart
+   - Can place orders
+   - Can view order history
+   - Can cancel orders
+   - Can logout
+
+3. DATABASE SYSTEM (Secondary Actor)
+   - Stores user data
+   - Stores cart data
+   - Stores order data
+
+
+═══════════════════════════════════════════════════════════════════════════════

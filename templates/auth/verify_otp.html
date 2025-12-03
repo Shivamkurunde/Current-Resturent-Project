@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP - Annpurana Pure Veg Hotel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .restaurant-logo {
+            margin-bottom: 2rem;
+        }
+        
+        .restaurant-name {
+            color: #28a745;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .otp-info {
+            background-color: #e7f3ff;
+            border: 1px solid #bee5eb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .otp-info h4 {
+            color: #0c5460;
+            margin-bottom: 0.5rem;
+        }
+        
+        .otp-info p {
+            color: #0c5460;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .otp-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .otp-input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .btn:hover {
+            background: #218838;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .resend-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .timer {
+            color: #dc3545;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .home-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .home-link a {
+            color: #28a745;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="restaurant-logo">
+            <div class="restaurant-name">🍽️ Annpurana Pure Veg Hotel</div>
+            <div class="subtitle">Email Verification</div>
+        </div>
+        
+        <div class="otp-info">
+            <h4>📧 Check Your Email!</h4>
+            <p>We've sent a 6-digit verification code to:<br>
+            <strong>{{ email }}</strong><br>
+            Please enter the code below to complete your registration.</p>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="otp">Enter 6-Digit OTP</label>
+                <input type="text" id="otp" name="otp" class="otp-input" required 
+                       maxlength="6" pattern="[0-9]{6}" placeholder="000000"
+                       autocomplete="one-time-code">
+            </div>
+            
+            <button type="submit" class="btn">Verify & Complete Registration</button>
+        </form>
+        
+        <div class="resend-section">
+            <div class="timer" id="countdown">
+                OTP expires in <span id="time-left">5:00</span>
+            </div>
+            
+            <form method="POST" action="{{ url_for('resend_otp') }}" style="display: inline;">
+                <input type="hidden" name="email" value="{{ email }}">
+                <button type="submit" class="btn btn-secondary" id="resend-btn" style="display: none;">
+                    Resend OTP
+                </button>
+            </form>
+        </div>
+        
+        <div class="home-link">
+            <a href="{{ url_for('home') }}">← Back to Restaurant</a>
+        </div>
+    </div>
+    
+    <script>
+        // OTP Timer
+        let timeLeft = 300; // 5 minutes in seconds
+        const countdownElement = document.getElementById('time-left');
+        const resendBtn = document.getElementById('resend-btn');
+        
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft <= 0) {
+                document.getElementById('countdown').style.display = 'none';
+                resendBtn.style.display = 'block';
+                return;
+            }
+            
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+        
+        // Auto-focus on OTP input
+        document.getElementById('otp').focus();
+        
+        // Start timer
+        updateTimer();
+        
+        // Format OTP input
+        document.getElementById('otp').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+</body>
+</html>

@@ -35,10 +35,30 @@
                           <a class="nav-link custom-nav-link" href="#Explore-Menu">Explore Menu</a>
                           <a class="nav-link custom-nav-link" href="#Delivery-Payments">Delivery & Payments</a>
                           <a class="nav-link custom-nav-link" href="#Follow-Us">Follow Us</a>
-                          <a class="nav-link custom-nav-link" href="/login">Login</a>
-                          <a class="nav-link custom-nav-link" href="/cart" id="cart-toggle">
-                              <i class="fas fa-shopping-cart"></i> Cart
-                          </a>
+                          
+                          {% if session.get('user_id') %}
+                              <!-- Logged In User -->
+                              <span class="nav-link custom-nav-link text-success">
+                                  <i class="fas fa-user"></i> {{ session.get('user_name') }}
+                              </span>
+                              <a class="nav-link custom-nav-link" href="/cart">
+                                  <i class="fas fa-shopping-cart"></i> Cart
+                              </a>
+                              <a class="nav-link custom-nav-link" href="/my-orders">
+                                  <i class="fas fa-box"></i> Orders
+                              </a>
+                              <a class="nav-link custom-nav-link" href="/logout">
+                                  <i class="fas fa-sign-out-alt"></i> Logout
+                              </a>
+                          {% else %}
+                              <!-- Guest User -->
+                              <a class="nav-link custom-nav-link" href="/auth/login">
+                                  <i class="fas fa-sign-in-alt"></i> Login
+                              </a>
+                              <a class="nav-link custom-nav-link" href="/register">
+                                  <i class="fas fa-user-plus"></i> Register
+                              </a>
+                          {% endif %}
                       </div>
                   </div>
 
