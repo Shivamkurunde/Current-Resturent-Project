@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -11,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     name = db.Column(db.String(100), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    is_verified = db.Column(db.Boolean, default=False)
+    is_verified = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -26,30 +26,6 @@ class User(db.Model):
     
     def __repr__(self):
         return f'<User {self.email}>'
-
-class OTP(db.Model):
-    __tablename__ = 'otps'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), nullable=False, index=True)
-    otp_code = db.Column(db.String(10), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_used = db.Column(db.Boolean, default=False)
-    
-    def __init__(self, email, otp_code, expiry_minutes=5):
-        self.email = email
-        self.otp_code = otp_code
-        self.expires_at = datetime.utcnow() + timedelta(minutes=expiry_minutes)
-    
-    def is_expired(self):
-        return datetime.utcnow() > self.expires_at
-    
-    def is_valid(self):
-        return not self.is_used and not self.is_expired()
-    
-    def __repr__(self):
-        return f'<OTP {self.email}>'
 
 class CartItem(db.Model):
     __tablename__ = 'cart_items'
