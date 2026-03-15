@@ -29,13 +29,8 @@
     {% endwith %}
 
     <div id="sectionVeg">
-        <div class="Veg-Container">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 text-center mb-4">
-                        <h1 class="section-heading">Pure Veg Dishes</h1>
-                        <p class="section-description">Fresh, healthy, and delicious vegetarian meals</p>
-                    </div>
+        <div class="container">
+            <div class="row">
 
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="shadow menu-item-card p-3 mb-3">
@@ -49,11 +44,13 @@
                                     <input type="hidden" name="item_price" value="120">
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="category" value="Veg">
-                                    <button type="submit" class="menu-item-link btn">Add to Cart</button>
+                                    <span class="menu-item-link">Order Now</span>
+                                    <div class="icon-conatiner">
+                                        <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                            <i class="fas fa-shopping-bag custom_icon"></i>
+                                        </button>
+                                    </div>
                                 </form>
-                                <a href="/cart" class="btn btn-outline-primary btn-sm mt-2">
-                                    <i class="fas fa-shopping-cart"></i> View Cart
-                                </a>
                             {% else %}
                                 <a href="/auth/login" class="menu-item-link">Login to Order</a>
                             {% endif %}
@@ -72,11 +69,13 @@
                                     <input type="hidden" name="item_price" value="150">
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="category" value="Veg">
-                                    <button type="submit" class="menu-item-link btn">Add to Cart</button>
+                                    <span class="menu-item-link">Order Now</span>
+                                    <div class="icon-conatiner">
+                                        <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                            <i class="fas fa-shopping-bag custom_icon"></i>
+                                        </button>
+                                    </div>
                                 </form>
-                                <a href="/cart" class="btn btn-outline-primary btn-sm mt-2">
-                                    <i class="fas fa-shopping-cart"></i> View Cart
-                                </a>
                             {% else %}
                                 <a href="/auth/login" class="menu-item-link">Login to Order</a>
                             {% endif %}
@@ -95,11 +94,13 @@
                                     <input type="hidden" name="item_price" value="120">
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="category" value="Veg">
-                                    <button type="submit" class="menu-item-link btn">Add to Cart</button>
+                                    <span class="menu-item-link">Order Now</span>
+                                    <div class="icon-conatiner">
+                                        <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                            <i class="fas fa-shopping-bag custom_icon"></i>
+                                        </button>
+                                    </div>
                                 </form>
-                                <a href="/cart" class="btn btn-outline-primary btn-sm mt-2">
-                                    <i class="fas fa-shopping-cart"></i> View Cart
-                                </a>
                             {% else %}
                                 <a href="/auth/login" class="menu-item-link">Login to Order</a>
                             {% endif %}
@@ -118,11 +119,13 @@
                                     <input type="hidden" name="item_price" value="180">
                                     <input type="hidden" name="quantity" value="1">
                                     <input type="hidden" name="category" value="Veg">
-                                    <button type="submit" class="menu-item-link btn">Add to Cart</button>
+                                    <span class="menu-item-link">Order Now</span>
+                                    <div class="icon-conatiner">
+                                        <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                            <i class="fas fa-shopping-bag custom_icon"></i>
+                                        </button>
+                                    </div>
                                 </form>
-                                <a href="/cart" class="btn btn-outline-primary btn-sm mt-2">
-                                    <i class="fas fa-shopping-cart"></i> View Cart
-                                </a>
                             {% else %}
                                 <a href="/auth/login" class="menu-item-link">Login to Order</a>
                             {% endif %}
@@ -141,6 +144,5 @@
                 {% endif %}
             </div>
         </div>
-    </div>
-</body>
+    </div></body>
 </html>
