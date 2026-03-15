@@ -38,15 +38,22 @@
                           
                           {% if session.get('user_id') %}
                               <!-- Logged In User -->
+                              {% if not session.get('is_admin') %}
                               <span class="nav-link custom-nav-link text-success">
                                   <i class="fas fa-user"></i> {{ session.get('user_name') }}
                               </span>
+                              {% endif %}
                               <a class="nav-link custom-nav-link" href="/cart">
                                   <i class="fas fa-shopping-cart"></i> Cart
                               </a>
                               <a class="nav-link custom-nav-link" href="/my-orders">
                                   <i class="fas fa-box"></i> Orders
                               </a>
+                              {% if session.get('is_admin') %}
+                              <a class="nav-link custom-nav-link" href="/admin">
+                                  <i class="fas fa-user-shield"></i> Admin Panel
+                              </a>
+                              {% endif %}
                               <a class="nav-link custom-nav-link" href="/logout">
                                   <i class="fas fa-sign-out-alt"></i> Logout
                               </a>
