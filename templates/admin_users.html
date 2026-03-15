@@ -54,7 +54,7 @@
                         {% for user in users %}
                         <tr>
                             <td>{{ user.id }}</td>
-                            <td>{{ user.email }}</td>
+                            <td>{{ user.name }}</td>
                             <td>{{ user.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
                             <td>
                                 <span class="status-pill {{ 'user-active' if user.is_verified else 'user-blocked' }}">
