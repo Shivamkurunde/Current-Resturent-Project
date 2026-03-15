@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - All Users</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .status-pill {
+            color: #fff;
+            font-weight: 600;
+            border-radius: 999px;
+            padding: 0.35rem 0.65rem;
+            display: inline-block;
+            font-size: 0.85rem;
+        }
+        .user-active { background: #16a34a; }
+        .user-blocked { background: #dc2626; }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">All Users</h1>
+            <div>
+                <a href="{{ url_for('admin_orders') }}" class="btn btn-success mr-2">All Orders</a>
+                <a href="{{ url_for('admin_panel') }}" class="btn btn-outline-secondary">Dashboard</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Orders</th>
+                            <th>Cart</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at.strftime('%d-%m-%Y %H:%M') }}</td>
+                            <td>
+                                <span class="status-pill {{ 'user-active' if user.is_verified else 'user-blocked' }}">
+                                    {{ 'Active' if user.is_verified else 'Blocked' }}
+                                </span>
+                            </td>
+                            <td>{{ user.orders|length }}</td>
+                            <td>{{ user.cart_items|length }}</td>
+                            <td>
+                                <div class="d-flex">
+                                    <form method="POST" action="{{ url_for('admin_toggle_ban_user', user_id=user.id) }}" class="mr-2">
+                                        <button class="btn btn-sm {{ 'btn-warning' if user.is_verified else 'btn-success' }}" type="submit">
+                                            {{ 'Ban' if user.is_verified else 'Unban' }}
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}" onsubmit="return confirm('Delete this user and all related data?')">
+                                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="7" class="text-center py-4">No users found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

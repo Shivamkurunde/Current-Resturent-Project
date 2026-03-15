@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Admin Dashboard</h1>
+            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Back to Home</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="row mb-4">
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Users</strong><br>{{ users_count }}</div></div></div>
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Active</strong><br>{{ active_users_count }}</div></div></div>
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Blocked</strong><br>{{ blocked_users_count }}</div></div></div>
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Orders</strong><br>{{ orders_count }}</div></div></div>
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Pending</strong><br>{{ pending_count }}</div></div></div>
+            <div class="col-md-3 mb-2"><div class="card"><div class="card-body"><strong>Carts</strong><br>{{ carts_count }}</div></div></div>
+            <div class="col-md-6 mb-2"><div class="card"><div class="card-body"><strong>Revenue</strong><br>Rs. {{ total_revenue }}</div></div></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h4>Users Management</h4>
+                        <p class="text-muted mb-4">View all users, ban/unban users, and delete users.</p>
+                        <a href="{{ url_for('admin_users') }}" class="btn btn-primary mt-auto">Open Users Page</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h4>Orders Management</h4>
+                        <p class="text-muted mb-4">View all orders and update order status.</p>
+                        <a href="{{ url_for('admin_orders') }}" class="btn btn-success mt-auto">Open Orders Page</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

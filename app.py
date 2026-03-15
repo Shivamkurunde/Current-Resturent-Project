@@ -1,8 +1,7 @@
 import os
-from flask import Flask, render_template, url_for, request, redirect, flash, session, jsonify
+from flask import Flask, render_template, url_for, request, redirect, flash, session
 from dotenv import load_dotenv
-from models import db, User, OTP, CartItem, Order, OrderItem
-from sendgrid_otp_service import SendGridOTPService
+from models import db, User, CartItem, Order, OrderItem
 from functools import wraps
 
 # Load environment variables
@@ -13,12 +12,48 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 
 # MySQL Database Configuration
 # Change these values after installing XAMPP
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'mysql+pymysql://root:@localhost/restaurant_db')
+# Fix Railway's postgres:// to postgresql:// for SQLAlchemy compatibility
+_db_url = os.getenv('DATABASE_URL', 'sqlite:///restaurant.db')
+if _db_url.startswith('postgres://'):
+    _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
 db.init_app(app)
-otp_service = SendGridOTPService()
+
+ITEM_IMAGES = {
+    'Veg Biryani': '/static/images/menu/veg/veg-biryani.jpg',
+    'Aloo Paratha': '/static/images/menu/veg/aloo-paratha.jpg',
+    'Dal Tadka': '/static/images/menu/veg/dal-tadka.jpg',
+    'Aloo Gobi': '/static/images/menu/veg/Aloo-Gobi.jpg',
+    'Pani Puri': '/static/images/menu/street-chaat/pani-puri.jpg',
+    'Samosa': '/static/images/menu/street-chaat/samosa.jpg',
+    'Missal Pav': '/static/images/menu/street-chaat/missal-pav.jpg',
+    'Chole Bhature': '/static/images/menu/street-chaat/chole-bhature.jpg',
+    'Paneer Tikha': '/static/images/menu/gym/High Protein/Paneer-Tikha.jpg',
+    'Palak Paneer': '/static/images/menu/gym/High Protein/Palak-Paneer.jpg',
+    'Rajma Chawal': '/static/images/menu/gym/High Protein/Rajma-Chawal.jpg',
+    'Avocado Toast': '/static/images/menu/gym/High Protein/avocado-toast.jpg',
+    'Gajar Halwa': '/static/images/menu/desserts and icream/Deserts/gajar-halwa.jpg',
+    'Cow milk Kheer': '/static/images/menu/desserts and icream/Deserts/kheer.jpg',
+    'Dryfruit Barfi': '/static/images/menu/desserts and icream/Deserts/dryfruit-barfi.jpg',
+    'Gulab Jamum': '/static/images/menu/desserts and icream/Deserts/gulab-jamun.jpg',
+    'Vanilla Ice Cream': '/static/images/menu/desserts and icream/Iceream/vanilla-ice-cream.png',
+    'Dryfruit Ice Cream': '/static/images/menu/desserts and icream/Iceream/dryfruit-icecream.jpg',
+    'Custard Ice Cream': '/static/images/menu/desserts and icream/Iceream/custard-icecream.jpg',
+    'Mango Ice Cream': '/static/images/menu/desserts and icream/Iceream/mango-icecream.jpg'
+}
+
+def get_item_image(item_name):
+    return ITEM_IMAGES.get(item_name, '/static/images/home/logo.jpg')
+
+def get_admin_usernames():
+    raw = os.getenv('ADMIN_USERNAMES', 'admin')
+    return {u.strip().lower() for u in raw.split(',') if u.strip()}
+
+def is_admin_username(username):
+    return (username or '').strip().lower() in get_admin_usernames()
 
 # Login required decorator
 def login_required(f):
@@ -30,13 +65,22 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('is_admin'):
+            flash('Admin access required.', 'error')
+            return redirect(url_for('home'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
 def home():
     return render_template('home.html')
 
 @app.route('/desserts')
 def desserts():
-    return render_template('Desserts.html')
+    return render_template('desserts.html')
 
 @app.route('/ice-cream')
 def ice_cream():
@@ -78,19 +122,18 @@ def cart():
     
     total = sum(item.get_total() for item in cart_items)
     
-    return render_template('cart.html', cart_items=cart_items, total=total)
+    return render_template('cart.html', cart_items=cart_items, total=total, get_item_image=get_item_image)
 
 # Authentication Routes
 @app.route('/register', methods=['GET', 'POST'])
 def auth_register():
     if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
+        username = request.form.get('username')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
         
         # Validation
-        if not all([name, email, password, confirm_password]):
+        if not all([username, password, confirm_password]):
             flash('All fields are required.', 'error')
             return render_template('auth/register.html')
         
@@ -101,93 +144,35 @@ def auth_register():
         if len(password) < 6:
             flash('Password must be at least 6 characters long.', 'error')
             return render_template('auth/register.html')
-        
-        # Check if user already exists
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered. Please login instead.', 'error')
+
+        if is_admin_username(username):
+            flash('This username is reserved.', 'error')
             return render_template('auth/register.html')
         
-        # Store user data in session temporarily
-        session['temp_user'] = {
-            'name': name,
-            'email': email,
-            'password': password
-        }
-        
-        # Send OTP
-        if otp_service.send_registration_otp(email):
-            flash('OTP sent to your email! Please check your inbox.', 'success')
-            return redirect(url_for('verify_otp', email=email))
-        else:
-            flash('Failed to send OTP. Please try again.', 'error')
+        # Check if username already exists
+        if User.query.filter_by(email=username).first():
+            flash('Username already taken. Please choose another.', 'error')
+            return render_template('auth/register.html')
+
+        try:
+            new_user = User(
+                name=username,
+                email=username,
+                is_verified=True
+            )
+            new_user.set_password(password)
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('auth_login'))
+        except Exception:
+            db.session.rollback()
+            flash('Registration failed. Please try again.', 'error')
             return render_template('auth/register.html')
     
     return render_template('auth/register.html')
-
-@app.route('/verify-otp')
-def verify_otp():
-    email = request.args.get('email')
-    if not email or 'temp_user' not in session:
-        flash('Invalid access. Please register again.', 'error')
-        return redirect(url_for('auth_register'))
-    
-    return render_template('auth/verify_otp.html', email=email)
-
-@app.route('/verify-otp', methods=['POST'])
-def verify_otp_post():
-    if 'temp_user' not in session:
-        flash('Session expired. Please register again.', 'error')
-        return redirect(url_for('auth_register'))
-    
-    otp_code = request.form.get('otp')
-    temp_user = session['temp_user']
-    email = temp_user['email']
-    
-    if not otp_code or len(otp_code) != 6:
-        flash('Please enter a valid 6-digit OTP.', 'error')
-        return render_template('auth/verify_otp.html', email=email)
-    
-    # Verify OTP
-    if otp_service.verify_otp(email, otp_code):
-        # Create user account
-        try:
-            new_user = User(
-                name=temp_user['name'],
-                email=temp_user['email'],
-                is_verified=True
-            )
-            new_user.set_password(temp_user['password'])
-            
-            db.session.add(new_user)
-            db.session.commit()
-            
-            # Clear temporary session data
-            session.pop('temp_user', None)
-            
-            flash('Registration successful! Please login with your credentials.', 'success')
-            return redirect(url_for('auth_login'))
-            
-        except Exception as e:
-            db.session.rollback()
-            flash('Registration failed. Please try again.', 'error')
-            return render_template('auth/verify_otp.html', email=email)
-    else:
-        flash('Invalid or expired OTP. Please try again.', 'error')
-        return render_template('auth/verify_otp.html', email=email)
-
-@app.route('/resend-otp', methods=['POST'])
-def resend_otp():
-    email = request.form.get('email')
-    if not email:
-        flash('Invalid request.', 'error')
-        return redirect(url_for('auth_register'))
-    
-    if otp_service.send_registration_otp(email):
-        flash('New OTP sent to your email!', 'success')
-    else:
-        flash('Failed to send OTP. Please try again.', 'error')
-    
-    return redirect(url_for('verify_otp', email=email))
 
 # Update old login route to redirect to new auth login
 @app.route('/login')
@@ -197,30 +182,31 @@ def login():
 @app.route('/auth/login', methods=['GET', 'POST'])
 def auth_login():
     if request.method == 'POST':
-        email = request.form.get('email')
+        username = request.form.get('username')
         password = request.form.get('password')
         remember = request.form.get('remember')
         
-        if not email or not password:
-            flash('Please enter both email and password.', 'error')
+        if not username or not password:
+            flash('Please enter both username and password.', 'error')
             return render_template('auth/login.html')
         
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(email=username).first()
         
         if user and user.check_password(password):
             if not user.is_verified:
-                flash('Please verify your email first.', 'error')
+                flash('Your account is blocked. Contact admin.', 'error')
                 return render_template('auth/login.html')
             
             session['user_id'] = user.id
-            session['user_name'] = user.name
+            session['user_name'] = user.email
             session['user_email'] = user.email
+            session['is_admin'] = is_admin_username(user.email)
             session.permanent = bool(remember)
             
-            flash(f'Welcome back, {user.name}!', 'success')
+            flash(f'Welcome back, {user.email}!', 'success')
             return redirect(url_for('home'))
         else:
-            flash('Invalid email or password.', 'error')
+            flash('Invalid username or password.', 'error')
             return render_template('auth/login.html')
     
     return render_template('auth/login.html')
@@ -390,5 +376,114 @@ def cancel_order(order_id):
     
     return redirect(url_for('my_orders'))
 
+# Admin Routes
+@app.route('/admin')
+@login_required
+@admin_required
+def admin_panel():
+    users_count = User.query.count()
+    active_users_count = User.query.filter_by(is_verified=True).count()
+    blocked_users_count = User.query.filter_by(is_verified=False).count()
+    orders_count = Order.query.count()
+    pending_count = Order.query.filter_by(status='Pending').count()
+    total_revenue = sum(order.total_amount for order in Order.query.filter(Order.status != 'Cancelled').all())
+    carts_count = CartItem.query.count()
+
+    return render_template(
+        'admin_panel.html',
+        users_count=users_count,
+        active_users_count=active_users_count,
+        blocked_users_count=blocked_users_count,
+        orders_count=orders_count,
+        pending_count=pending_count,
+        total_revenue=total_revenue,
+        carts_count=carts_count
+    )
+
+@app.route('/admin/users')
+@login_required
+@admin_required
+def admin_users():
+    users = User.query.order_by(User.created_at.desc()).all()
+    return render_template('admin_users.html', users=users)
+
+@app.route('/admin/orders')
+@login_required
+@admin_required
+def admin_orders():
+    orders = Order.query.order_by(Order.created_at.desc()).all()
+    return render_template('admin_orders.html', orders=orders)
+
+@app.route('/admin/orders/<int:order_id>/status', methods=['POST'])
+@login_required
+@admin_required
+def admin_update_order_status(order_id):
+    valid_statuses = {'Pending', 'Confirmed', 'Delivered', 'Cancelled'}
+    new_status = request.form.get('status', '').strip().title()
+    order = Order.query.get(order_id)
+
+    if not order:
+        flash('Order not found.', 'error')
+        return redirect(url_for('admin_orders'))
+
+    if new_status not in valid_statuses:
+        flash('Invalid status.', 'error')
+        return redirect(url_for('admin_orders'))
+
+    order.status = new_status
+    db.session.commit()
+    flash(f'Order #{order.id} updated to {new_status}.', 'success')
+    return redirect(url_for('admin_orders'))
+
+@app.route('/admin/users/<int:user_id>/toggle-ban', methods=['POST'])
+@login_required
+@admin_required
+def admin_toggle_ban_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin_users'))
+
+    if user.id == session.get('user_id'):
+        flash('You cannot ban/unban your own account.', 'error')
+        return redirect(url_for('admin_users'))
+
+    user.is_verified = not user.is_verified
+    db.session.commit()
+
+    state = 'unblocked' if user.is_verified else 'blocked'
+    flash(f'User {user.email} {state}.', 'success')
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/users/<int:user_id>/delete', methods=['POST'])
+@login_required
+@admin_required
+def admin_delete_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin_users'))
+
+    if user.id == session.get('user_id'):
+        flash('You cannot delete your own account.', 'error')
+        return redirect(url_for('admin_users'))
+
+    OrderItem.query.filter(
+        OrderItem.order_id.in_(
+            db.session.query(Order.id).filter(Order.user_id == user.id)
+        )
+    ).delete(synchronize_session=False)
+    Order.query.filter_by(user_id=user.id).delete(synchronize_session=False)
+    CartItem.query.filter_by(user_id=user.id).delete(synchronize_session=False)
+    db.session.delete(user)
+    db.session.commit()
+
+    flash('User deleted successfully.', 'success')
+    return redirect(url_for('admin_users'))
+
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.getenv('DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode)
