@@ -13,7 +13,7 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 # MySQL Database Configuration
 # Change these values after installing XAMPP
 # Fix Railway's postgres:// to postgresql:// for SQLAlchemy compatibility
-_db_url = os.getenv('DATABASE_URL', 'sqlite:///restaurant.db')
+_db_url = os.getenv('DATABASE_URL', 'sqlite:///restaurant.db').strip()
 if _db_url.startswith('postgres://'):
     _db_url = _db_url.replace('postgres://', 'postgresql://', 1)
 app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
