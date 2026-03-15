@@ -6,101 +6,136 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/1e8988dde9.js" crossorigin="anonymous"></script>
-       
     <link rel="stylesheet" href="/static/Experiment.css">
-  <script src="/static/Experiment.js"></script>
-  
+    <script src="/static/Experiment.js"></script>
 </head>
 <body>
+    {% include "navbar.html" %}
 
-    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <div id="sectionDeserts">
-
         <div class="container">
             <div class="row">
 
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/desserts and icream/Deserts/gajar-halwa.jpg" class="menu-item-image w-100" alt="Gym Food" />
+                        <img src="/static/images/menu/desserts and icream/Deserts/gajar-halwa.jpg" class="menu-item-image w-100" alt="Gajar Halwa" />
                         <h1 class="menu-card-title">Gajar Halwa</h1>
-                        <p class="Dish-Price">Rs.250 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+                        <p class="Dish-Price">Rs.250</p>
+                        {% if session.get('user_id') %}
+                            <form method="POST" action="/add-to-cart" style="display: inline;">
+                                <input type="hidden" name="item_name" value="Gajar Halwa">
+                                <input type="hidden" name="item_price" value="250">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="category" value="Desserts">
+                                <span class="menu-item-link">Order Now</span>
+                                <div class="icon-conatiner">
+                                    <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                        <i class="fas fa-shopping-bag custom_icon"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <a href="/auth/login" class="menu-item-link">Login to Order</a>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/desserts and icream/Deserts/kheer.jpg" class="menu-item-image w-100" alt="Gym Food" />
+                        <img src="/static/images/menu/desserts and icream/Deserts/kheer.jpg" class="menu-item-image w-100" alt="Cow milk Kheer" />
                         <h1 class="menu-card-title">Cow milk Kheer</h1>
-                        <p class="Dish-Price">Rs.160 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+                        <p class="Dish-Price">Rs.160</p>
+                        {% if session.get('user_id') %}
+                            <form method="POST" action="/add-to-cart" style="display: inline;">
+                                <input type="hidden" name="item_name" value="Cow milk Kheer">
+                                <input type="hidden" name="item_price" value="160">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="category" value="Desserts">
+                                <span class="menu-item-link">Order Now</span>
+                                <div class="icon-conatiner">
+                                    <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                        <i class="fas fa-shopping-bag custom_icon"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <a href="/auth/login" class="menu-item-link">Login to Order</a>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/desserts and icream/Deserts/dryfruit-barfi.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Dryfruit Barfi </h1>
-                        <p class="Dish-Price">Rs.190 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+                        <img src="/static/images/menu/desserts and icream/Deserts/dryfruit-barfi.jpg" class="menu-item-image w-100" alt="Dryfruit Barfi" />
+                        <h1 class="menu-card-title">Dryfruit Barfi</h1>
+                        <p class="Dish-Price">Rs.190</p>
+                        {% if session.get('user_id') %}
+                            <form method="POST" action="/add-to-cart" style="display: inline;">
+                                <input type="hidden" name="item_name" value="Dryfruit Barfi">
+                                <input type="hidden" name="item_price" value="190">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="category" value="Desserts">
+                                <span class="menu-item-link">Order Now</span>
+                                <div class="icon-conatiner">
+                                    <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                        <i class="fas fa-shopping-bag custom_icon"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <a href="/auth/login" class="menu-item-link">Login to Order</a>
+                        {% endif %}
                     </div>
                 </div>
 
                 <div class="col-12 col-md-6 col-lg-3">
                     <div class="shadow menu-item-card p-3 mb-3">
-                        <img src="/static/images/menu/desserts and icream/Deserts/gulab-jamun.jpg" class="menu-item-image w-100" alt="Gym Food" />
-                        <h1 class="menu-card-title">Gulab Jamum </h1>
-                        <p class="Dish-Price">Rs.90 </p>
-                        <a href="" class="menu-item-link">
-                            Order Now
-                        </a>
-                          <div class="icon-conatiner">
-                                   <button class="btn add-to-cart-icon mr-auto">
-                                       <i class="fas fa-shopping-bag custom_icon"></i>
-                               </button>
-                              </div>
-
+                        <img src="/static/images/menu/desserts and icream/Deserts/gulab-jamun.jpg" class="menu-item-image w-100" alt="Gulab Jamun" />
+                        <h1 class="menu-card-title">Gulab Jamum</h1>
+                        <p class="Dish-Price">Rs.90</p>
+                        {% if session.get('user_id') %}
+                            <form method="POST" action="/add-to-cart" style="display: inline;">
+                                <input type="hidden" name="item_name" value="Gulab Jamum">
+                                <input type="hidden" name="item_price" value="90">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="category" value="Desserts">
+                                <span class="menu-item-link">Order Now</span>
+                                <div class="icon-conatiner">
+                                    <button type="submit" class="btn add-to-cart-icon mr-auto">
+                                        <i class="fas fa-shopping-bag custom_icon"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        {% else %}
+                            <a href="/auth/login" class="menu-item-link">Login to Order</a>
+                        {% endif %}
                     </div>
                 </div>
-
 
             </div>
         </div>
 
-          <div class=" d-flex flex-row justify-content-center align-items-end mb-3 ">
-                    <a href="/Dessert-Icream"> <button class="back-button btn btn-primary mr-2 ">Back</button></a>
-                    <a href="/"> <button class="back-button btn btn-primary">Go to Home</button></a>
+        <div class="d-flex justify-content-center align-items-end mb-3">
+            <a href="/Dessert-Icream"><button class="back-button btn btn-primary mr-2">Back</button></a>
+            <a href="/"><button class="back-button btn btn-primary">Go to Home</button></a>
+            {% if session.get('user_id') %}
+                <a href="/cart" class="btn btn-success ml-2"><i class="fas fa-shopping-cart"></i> Go to Cart</a>
+            {% endif %}
         </div>
-
-
-
     </div>
-
-
-
 </body>
 </html>
+

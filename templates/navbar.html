@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: sticky; top: 0; z-index: 1000;">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="/static/images/home/logo.jpg" style="height: 45px;" />
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <div class="navbar-nav ml-auto">
+                <a class="nav-link" href="/">Home</a>
+                <a class="nav-link" href="/veg">Veg</a>
+                <a class="nav-link" href="/street-chaat">Street Chaat</a>
+                <a class="nav-link" href="/gym-food">Gym Food</a>
+                <a class="nav-link" href="/Dessert-Icream">Desserts</a>
+
+                {% if session.get('user_id') %}
+                    {% if not session.get('is_admin') %}
+                    <span class="nav-link text-success">
+                        <i class="fas fa-user"></i> {{ session.get('user_name') }}
+                    </span>
+                    {% endif %}
+                    <a class="nav-link" href="/cart">
+                        <i class="fas fa-shopping-cart"></i> Cart
+                        {% if cart_count and cart_count > 0 %}
+                            <span class="badge badge-danger">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                    <a class="nav-link" href="/my-orders"><i class="fas fa-box"></i> Orders</a>
+                    {% if session.get('is_admin') %}
+                    <a class="nav-link" href="/admin"><i class="fas fa-user-shield"></i> Admin</a>
+                    {% endif %}
+                    <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                {% else %}
+                    <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    <a class="nav-link" href="/register"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

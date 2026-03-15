@@ -12,6 +12,8 @@
 </head>
 
 <body>
+    {% include "navbar.html" %}
+
     <!-- Flash Messages -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -146,4 +148,5 @@
         </div>
     </div></body>
 </html>
+
 

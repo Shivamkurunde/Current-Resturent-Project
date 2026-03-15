@@ -10,6 +10,8 @@
     <script src="/static/Experiment.js"></script>
 </head>
 <body>
+    {% include "navbar.html" %}
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="container mt-3">
@@ -72,4 +74,5 @@
     </div>
 </body>
 </html>
+
 
